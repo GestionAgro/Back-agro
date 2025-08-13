@@ -4,7 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import { connectDB } from './config/Database';
-import UsarioRoutes from './routes/usuarioRoutes'
+import UsuarioRoutes from './routes/UsuarioRoutes';
 
 
 const app = express();
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(helmet());
 
 // usuarios
-app.use('/', UsarioRoutes);
+app.use('/usuarios', UsuarioRoutes);
 
 
 app.get('/', (req, res) => {
