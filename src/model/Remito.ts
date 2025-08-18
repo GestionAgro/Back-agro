@@ -1,5 +1,4 @@
 interface Remito {
-
      _id?: String;
      numero_remito:  String;
      fecha:  Date;

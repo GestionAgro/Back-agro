@@ -4,7 +4,7 @@ import Usuario from "../model/Usuario";
 const usuarioSchema = new Schema<Usuario>({
     nombre: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    contrasenia: { type: String, required: true },
+    contrasenia: { type: String, required: false },
     rol: { type: String, required: true }
   },
   { versionKey: false }
