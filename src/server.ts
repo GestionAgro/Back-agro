@@ -5,10 +5,7 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import { connectDB } from './config/Database';
 import UsuarioRoutes from './routes/UsuarioRoutes';
-//import AuthRoutes from "./routes/AuthRoutes";
-
-
-
+import RemitosRoutes from './routes/RemitosRoutes'
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -21,6 +18,9 @@ app.use(helmet());
 
 // usuarios
 app.use('/usuarios', UsuarioRoutes);
+
+//remitos
+app.use('/remitos', RemitosRoutes);
 
 
 app.get('/', (req, res) => {

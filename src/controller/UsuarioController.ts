@@ -25,22 +25,12 @@ export const obtenerUsuario = async (req: Request, res: Response) => {
   }
 };
 
-
 export const crearUsuario = async (req: Request, res: Response) => {
   try {
-    const { email } = req.body;
-
-    const usuarioExistente = await UsuarioModel.findOne({ email });
-    if (usuarioExistente) {
-      res.status(200).json(usuarioExistente);
-      return; 
-    }
-
     const usuario = await UsuarioService.crearUsuario(req.body);
     res.status(201).json(usuario);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: "No se pudo crear el usuario" });
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
   }
 };
 

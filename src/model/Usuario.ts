@@ -1,11 +1,11 @@
+import Rol from "./Rol";
 
 interface Usuario {
     _id?: string;
     nombre: string;
-    email: String;
+    email: string;
     contrasenia: string;
-    rol: string;
-    
+    rol: Rol;
 }
 
 export default Usuario;
