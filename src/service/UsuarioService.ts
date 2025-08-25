@@ -1,5 +1,6 @@
 import UsuarioRepository from "../repository/UsuarioRepository";
 import Usuario from "../model/Usuario";
+import Rol from "../model/Rol";
 
 const listarUsuarios = async () => {
   return await UsuarioRepository.findAll();
@@ -10,7 +11,15 @@ const obtenerUsuario = async (id: string) => {
 };
 
 const crearUsuario = async (usuario: Usuario) => {
-    return await UsuarioRepository.create(usuario);
+  if (!Object.values(Rol).includes(usuario.rol)) {
+    throw new Error(`Rol inválido`);
+  }
+
+  const usuarioExistente = await UsuarioRepository.findByEmail(usuario.email);
+  if (usuarioExistente) {
+    return usuarioExistente;
+  }
+  return await UsuarioRepository.create(usuario);
 };
 
 const actualizarUsuario = async (id: string, usuario: Partial<Usuario>) => {

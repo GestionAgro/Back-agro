@@ -12,4 +12,5 @@ router.put("/:id", actualizarUsuario);
 router.delete("/:id", borrarUsuario);
 
 
+
 export default router; 

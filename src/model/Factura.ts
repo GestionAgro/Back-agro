@@ -1,7 +1,8 @@
 interface Factura {
     _id?: string;
     estado: string;
-    numero_factura: string;
+    numero_factura: number;
+    tipo_factura: string;
     empresa: string;
     importe: number;
     recibido_por: string;

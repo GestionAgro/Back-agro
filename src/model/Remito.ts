@@ -1,12 +1,16 @@
-interface Remito {
+export enum EstadoRemito {
+  EN_ESPERA = "EN_ESPERA",
+  FACTURADO = "FACTURADO",
+}
 
-     _id?: String;
-     numero_remito:  String;
-     fecha:  Date;
-     empresa: String;
-     detalle: String;
-     recibido_por: string;
-     estado:  String;
+interface Remito {
+  _id?: string;
+  numero_remito: string;
+  fecha: Date;
+  empresa: string;
+  detalle: string;
+  recibido_por: string; 
+  estado: EstadoRemito; 
 }
 
 export default Remito;

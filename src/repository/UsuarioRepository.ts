@@ -1,4 +1,5 @@
 import Usuario from "../model/Usuario";
+import { RemitoModel } from "../schema/RemitoSchema";
 import { UsuarioModel } from "../schema/UsuarioSchema";
 
 const findAll = async() => {
@@ -21,4 +22,9 @@ const remove = async( id: string) => {
     return await UsuarioModel.findByIdAndDelete(id)
 };
 
-export default{findAll,findById,create,update,remove};
+const findByEmail = async (email: string) => {
+  return await UsuarioModel.findOne({ email });
+};
+
+
+export default{findAll,findById,create,update,remove,findByEmail};
