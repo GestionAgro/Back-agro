@@ -5,7 +5,7 @@ export enum EstadoRemito {
 
 interface Remito {
   _id?: string;
-  numero_remito: string;
+  numero_remito: number;
   fecha: Date;
   empresa: string;
   detalle: string;
@@ -13,4 +13,4 @@ interface Remito {
   estado: EstadoRemito; 
 }
 
-export default Remito;
+export default Remito; 

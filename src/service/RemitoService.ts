@@ -1,5 +1,5 @@
 import RemitoRepository from "../repository/RemitoRepository";
-import Remito from "../model/Remito";
+import Remito, { EstadoRemito } from "../model/Remito";
 
 const listarRemitos = async () => {
   return await RemitoRepository.findall();
@@ -25,5 +25,10 @@ const obtenerPorNumero = async (numero: number): Promise<Remito | null> => {
   return await RemitoRepository.findByNumero(numero);
 };
 
+const actualizarEstado = async (numero_remito: number) => {
+  return await RemitoRepository.updateByNumero(numero_remito, {
+    estado: EstadoRemito.FACTURADO
+  });
+};
 
-export default { listarRemitos, obtenerRemito, crearRemito, actualizarRemito, borrarRemito, obtenerPorNumero };
+export default { listarRemitos, obtenerRemito, crearRemito, actualizarRemito, borrarRemito, obtenerPorNumero, actualizarEstado};
