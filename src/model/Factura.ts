@@ -1,12 +1,23 @@
+export enum EstadoFactura {
+  PENDIENTE = "PENDIENTE",
+  IMPUTADA = "IMPUTADA",
+}
+
+export enum TipoFactura {
+  A = "A",
+  B = "B",
+  C = "C",
+}
+
 interface Factura {
     _id?: string;
-    estado: string;
+    numero_remito: number;
     numero_factura: number;
-    tipo_factura: string;
+    tipo_factura: TipoFactura;
     empresa: string;
     importe: number;
     recibido_por: string;
-    id_remito: string;
+    estado: EstadoFactura;
     
     
 }

@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import Remito, { EstadoRemito } from "../model/Remito";
 
 const remitoSchema = new Schema({
@@ -6,7 +6,7 @@ const remitoSchema = new Schema({
   fecha: { type: Date, required: true },
   empresa: { type: String, required: true },
   detalle: { type: String, required: true },
-  recibido_por: { type: String, required: true },
+  recibido_por: { type: Types.ObjectId, ref: "Persona", required: true },
   estado: { type: String, enum:Object.values(EstadoRemito), require: true, default: EstadoRemito.EN_ESPERA, },
 }, { versionKey: false });
 
