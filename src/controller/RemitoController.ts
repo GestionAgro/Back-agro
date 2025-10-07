@@ -26,6 +26,7 @@ export const obtenerRemito = async (req: Request, res: Response) => {
 
 export const crearRemito = async (req: Request, res: Response) => {
   try {
+     console.log(req.body);
     const nuevo = await RemitoService.crearRemito(req.body);
     res.status(201).json(nuevo);
   } catch (error:any) {

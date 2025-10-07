@@ -1,3 +1,5 @@
+import { ObjectId, Types } from "mongoose";
+
 export enum TipoPersona {
   ENCARGADO = "ENCARGADO",
   VETERINARIO = "VETERINARIO",
@@ -5,7 +7,7 @@ export enum TipoPersona {
 }
 
 interface Persona {
-    _id?: string;
+    _id?: Types.ObjectId; 
     nombre: string;
     tipo_persona: TipoPersona;
 }

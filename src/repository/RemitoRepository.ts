@@ -8,7 +8,7 @@ const findall = async () => {
 
 const findById = async (id: string) => {
     return await RemitoModel.findById(id).populate("recibido_por");
-};
+}; 
 
 const create = async (remito : Remito) => {
     return await RemitoModel.create(remito);

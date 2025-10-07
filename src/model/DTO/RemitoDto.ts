@@ -5,19 +5,19 @@ export enum EstadoRemito {
   FACTURADO = "FACTURADO",
 }
 interface ProductoDetalleRemito {
-  id_producto:  Types.ObjectId;     
+  id_producto:  string; 
   nombre_producto: string;  
   cantidad: number;         
 }
 
-interface Remito {
-  _id?: Types.ObjectId;
+interface RemitoDto {
+  _id?: string;
   numero_remito: number;
   fecha: Date;
   empresa: string;
   productos: ProductoDetalleRemito[];
-  recibido_por: Types.ObjectId; 
+  recibido_por: string; 
   estado: EstadoRemito; 
 }
 
-export default Remito; 
+export default RemitoDto; 

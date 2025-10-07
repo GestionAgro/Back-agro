@@ -8,7 +8,7 @@ import UsuarioRoutes from './routes/UsuarioRoutes';
 import RemitosRoutes from './routes/RemitosRoutes';
 import FacturasRoutes from './routes/FacturasRoutes';
 import PersonasRoutes from './routes/PersonaRoutes';
-
+import ProductoRoutes from './routes/ProductoRoutes';
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -31,6 +31,8 @@ app.use('/facturas', FacturasRoutes);
 //peronas
 app.use('/personas', PersonasRoutes);
 
+// producto
+app.use('/producto', ProductoRoutes);
 
 app.get('/', (req, res) => {
   res.json('Hello World');
