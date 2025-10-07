@@ -1,10 +1,11 @@
+import { ObjectId, Types } from "mongoose";
 import Factura from "../model/Factura";
 import { FacturaModel } from "../schema/FacturaSchema";
 
 const findall = async () => {
     return await FacturaModel.find().populate("recibido_por");
 };
-
+ 
 const findById = async (id: string) => {
     return await FacturaModel.findById(id).populate("recibido_por");
 };
@@ -13,7 +14,7 @@ const create = async (factura : Factura) => {
     return await FacturaModel.create(factura);
 };
 
-const update = async (id: string, factura: Partial<Factura>) => {
+const update = async (id: string, factura: Partial<Factura>) =>{
   return await FacturaModel.findOneAndUpdate({ _id: id }, factura, { new: true });
 };
 

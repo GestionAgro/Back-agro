@@ -11,16 +11,16 @@ export enum TipoFactura {
   C = "C",
 }
 
-interface Factura {
-    _id:  Types.ObjectId; 
+interface FacturaDto {
+    _id?:  string; 
     numero_remito: number;
     numero_factura: number; 
     tipo_factura: TipoFactura;
     empresa: string;
     importe: number;
-    recibido_por: Types.ObjectId; 
+    recibido_por: string; 
     estado: EstadoFactura;
     
 }
 
-export default Factura;
+export default FacturaDto;

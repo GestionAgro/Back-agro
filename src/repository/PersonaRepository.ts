@@ -7,7 +7,7 @@ const listar = async (): Promise<Persona[]> => {
 
 const obtenerPorId = async (id: string): Promise<Persona | null> => {
   return await PersonaModel.findById(id);
-};
+}; 
 
 const crear = async (data: Persona): Promise<Persona> => {
   const persona = new PersonaModel(data);

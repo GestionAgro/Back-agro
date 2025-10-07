@@ -1,5 +1,6 @@
 import Persona from "../model/Persona";
 import PersonaRepository from "../repository/PersonaRepository";
+
 const listar = async (): Promise<Persona[]> => {
   return await PersonaRepository.listar();
 };
