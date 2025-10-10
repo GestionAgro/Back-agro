@@ -43,8 +43,9 @@ export const actualizarRemito = async (req: Request, res: Response) => {
     } else {
       res.status(200).json(actualizado);
     }
-  } catch (error) {
-    res.status(400).json({ error: "Error al actualizar remito" });
+  } catch (error:any) {
+    console.error("error exacto en actuakizar:",error);
+    res.status(400).json({ error:error.message ||  "Error al actualizar remito" });
   }
 };
 

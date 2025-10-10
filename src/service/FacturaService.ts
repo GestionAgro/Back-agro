@@ -11,17 +11,17 @@ const obtenerFactura = async (id: string) => {
   return await FacturaRepository.findById(id);
 };
 
-const crearFactura = async (factura: Factura) => {
-  const existe = await FacturaRepository.findByNumero(factura.numero_factura);
+const crearFactura = async (facturadto: FacturaDto) => {
+  const existe = await FacturaRepository.findByNumero(facturadto.numero_factura);
   if (existe) {
-    throw new Error(`Ya existe una factura con el número ${factura.numero_factura}`);
+    throw new Error(`Ya existe una factura con el número ${facturadto.numero_factura}`);
   }
-  return await FacturaRepository.create(factura);
+  return await FacturaRepository.create(facturadto);
 };
 
 
-const actualizarFactura = async (id: string, factura: Partial<Factura>) => {
-  return await FacturaRepository.update(id, factura);
+const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>) => {
+  return await FacturaRepository.update(id, facturadto);
 };
 
 const borrarFactura = async (id: string) => {
@@ -54,6 +54,10 @@ const asociarRemitoAFactura = async (id: string, numero_remito: number) => {
   if (!facturaActualizada) {
     throw new Error("No se encontró la factura para actualizar");
   }
+ if (!facturaActualizada._id) {
+    throw new Error("No se encontró la factura con id");
+  }
+
   await RemitoService.actualizarEstado(numero_remito);
 
   return await FacturaRepository.findById(facturaActualizada._id.toString()); 

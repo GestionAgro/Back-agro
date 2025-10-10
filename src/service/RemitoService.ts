@@ -2,6 +2,7 @@ import RemitoRepository from "../repository/RemitoRepository";
 import Remito, { EstadoRemito } from "../model/Remito";
 import ProductoService from "./ProductoService";
 import ProductoRepository from "../repository/ProductoRepository";
+import RemitoDto from "../model/DTO/RemitoDto";
 
 const listarRemitos = async () => {
   return await RemitoRepository.findall();
@@ -30,6 +31,9 @@ const actualizarOCrearProducto = async (detalle: any) => {
   let producto = await buscarProducto(detalle);
 
   if (producto) {
+    if (!producto._id) {
+  throw new Error("El producto no tiene ID definido");
+}
     const nuevaCantidad = producto.cantidad_actual + detalle.cantidad;
     await ProductoRepository.update(producto._id, {cantidad_actual: nuevaCantidad,});
 
@@ -37,7 +41,10 @@ const actualizarOCrearProducto = async (detalle: any) => {
     detalle.nombre_producto = producto.nombre_producto;
   } else {
     producto = await ProductoRepository.create({nombre_producto: detalle.nombre_producto,cantidad_actual: detalle.cantidad,});
-
+     
+    if(!producto._id){
+      throw new Error("Error al crear producoto: no se genero id")
+    }
     detalle.id_producto = producto._id.toString();
     detalle.nombre_producto = producto.nombre_producto;
   }
@@ -65,34 +72,34 @@ const validarFecha = (fecha: Date) => {
   return fechas; 
 };
 
-const crearRemito = async (remito: Remito) => {
-remito.fecha = validarFecha(remito.fecha);
-  const existe = await  RemitoRepository.findByNumero(remito.numero_remito);
+const crearRemito = async (remitoDto: RemitoDto) => {
+remitoDto.fecha = validarFecha(remitoDto.fecha);
+  const existe = await  RemitoRepository.findByNumero(remitoDto.numero_remito);
   if (existe){
-   throw new Error(`Ya existe una factura con el número ${remito.numero_remito}`);
+   throw new Error(`Ya existe una factura con el número ${remitoDto.numero_remito}`);
   }
   
   const productosActualizados = [];
-  for (const detalle of remito.productos) {
+  for (const detalle of remitoDto.productos) {
     const actualizado = await actualizarOCrearProducto(detalle);
     productosActualizados.push(actualizado);
   }
 
-  remito.productos = productosActualizados;
-  return await RemitoRepository.create(remito);
+  remitoDto.productos = productosActualizados;
+  return await RemitoRepository.create(remitoDto);
 };
 
 
 
-const actualizarRemito = async (id: string, remito: Partial<Remito>) => {
-  return await RemitoRepository.update(id, remito);
+const actualizarRemito = async (id: string, remitoDto: Partial<RemitoDto>) => {
+  return await RemitoRepository.update(id, remitoDto);
 };
 
 const borrarRemito = async (id: string) => {
   return await RemitoRepository.remove(id);
 };
 
-const obtenerPorNumero = async (numero: number): Promise<Remito | null> => {
+const obtenerPorNumero = async (numero: number): Promise<RemitoDto | null> => {
   return await RemitoRepository.findByNumero(numero);
 };
 

@@ -1,14 +1,15 @@
 import { model, Schema, Types } from "mongoose";
-import Remito, { EstadoRemito } from "../model/Remito";
+import Remito, { EstadoRemito,ProductoDetalleRemito } from "../model/Remito";
+import ProductoRemito from "../model/ProductoRemito";
 
-const productoDetalleSchema = new Schema({
-  id_producto: { type: Types.ObjectId, ref: "Producto", required: true },
+const productoDetalleSchema = new Schema<ProductoDetalleRemito>({
+  id_producto: { type: Schema.Types.ObjectId, ref: "Producto", required: true },
   nombre_producto: { type: String, required: true },
   cantidad: { type: Number, required: true },
 });
 
 
-const remitoSchema = new Schema({
+const remitoSchema = new Schema<Remito>({
   numero_remito: { type: Number, required: true },
   fecha: { type: Date, required: true },
   empresa: { type: String, required: true },

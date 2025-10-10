@@ -4,7 +4,7 @@ export enum EstadoRemito {
   EN_ESPERA = "EN_ESPERA",
   FACTURADO = "FACTURADO",
 }
-interface ProductoDetalleRemito {
+export interface ProductoDetalleRemito {
   id_producto:  Types.ObjectId;     
   nombre_producto: string;  
   cantidad: number;         

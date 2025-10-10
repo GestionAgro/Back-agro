@@ -1,29 +1,40 @@
 import Usuario from "../model/Usuario";
 import { RemitoModel } from "../schema/RemitoSchema";
 import { UsuarioModel } from "../schema/UsuarioSchema";
+import UsuarioDTO from "../model/DTO/UsuarioDto";
+import { mapDtoToEntity, mapEntityToDto } from "../mappers/UsuarioMapper";
+import Persona from "../model/Persona";
 
 const findAll = async() => {
-    return await UsuarioModel.find();
+const docs = await UsuarioModel.find();
+return docs.map(mapEntityToDto);
 };
 
 const findById = async (id:string) => {
-    return await UsuarioModel.findById(id);
+  const doc = await UsuarioModel.findById(id);
+  return doc ? mapEntityToDto(doc): null;
 };
 
-const create = async (usuario: Usuario) => {
-    return await UsuarioModel.create(usuario);
+const create = async (dto: UsuarioDTO) => {
+  const entity = mapDtoToEntity(dto);
+  const created = await UsuarioModel.create(entity);
+  return mapEntityToDto(created);
 };
 
-const update = async (id: string, usuario: Partial<Usuario>) => {
-    return await UsuarioModel.findByIdAndUpdate(id,usuario, {new: true})
+const update = async (id: string, dto: Partial<UsuarioDTO>) => {
+  const entity = mapDtoToEntity(dto as UsuarioDTO);
+  const updated = await UsuarioModel.findByIdAndUpdate(id, entity, {new: true})
+  return updated ? mapEntityToDto(updated) : null;  
 };
 
 const remove = async( id: string) => {
-    return await UsuarioModel.findByIdAndDelete(id)
+   const deleted = await UsuarioModel.findByIdAndDelete(id)
+   return deleted ? mapEntityToDto(deleted) : null;
 };
 
 const findByEmail = async (email: string) => {
-  return await UsuarioModel.findOne({ email });
+  const doc = await UsuarioModel.findOne({ email });
+  return doc ? mapEntityToDto(doc) : null;
 };
 
 

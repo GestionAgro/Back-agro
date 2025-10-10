@@ -1,5 +1,6 @@
 import ProductoRepository from "../repository/ProductoRepository";
 import Producto from "../model/Producto";
+import ProductoDTO from "../model/DTO/ProductoDto";
 
 const listarProductos = async () => {
   return await ProductoRepository.findall();
@@ -9,11 +10,11 @@ const obtenerProducto = async (id: string) => {
   return await ProductoRepository.findById(id);
 };
 
-const crearProducto = async (producto: Producto) => {
-  return await ProductoRepository.create(producto);
+const crearProducto = async (productodto: ProductoDTO) => {
+  return await ProductoRepository.create(productodto);
 };
 
-const actualizarProducto = async (id: string, data: Partial<Producto>) => {
+const actualizarProducto = async (id: string, data: Partial<ProductoDTO>) => {
   return await ProductoRepository.update(id, data);
 };
 

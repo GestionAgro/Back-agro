@@ -1,35 +1,47 @@
 import { RemitoModel } from "../schema/RemitoSchema";
 import Remito from "../model/Remito";
 import { populate } from "dotenv";
+import { mapDtoToEntity, mapEntityToDto } from "../mappers/RemitoMapper"
+import RemitoDto from "../model/DTO/RemitoDto";
+
 
 const findall = async () => {
-    return await RemitoModel.find().populate("recibido_por");
+  const docs = await RemitoModel.find().populate("recibido_por");
+  return docs.map(mapEntityToDto);
 };
 
 const findById = async (id: string) => {
-    return await RemitoModel.findById(id).populate("recibido_por");
-}; 
-
-const create = async (remito : Remito) => {
-    return await RemitoModel.create(remito);
+  const doc = await RemitoModel.findById(id).populate("recibido_por");
+  return doc ? mapEntityToDto(doc) : null;
 };
 
-const update = async (id: string, remito: Partial<Remito>) => {
-  return await RemitoModel.findOneAndUpdate({ _id: id }, remito, { new: true });
+const create = async (remitodto: RemitoDto) => {
+  const entity = mapDtoToEntity(remitodto);
+  const created = await RemitoModel.create(entity);
+  return mapEntityToDto(created);
+};
+
+const update = async (id: string, dto: Partial<RemitoDto>): Promise<RemitoDto | null> => {
+  const updated = await RemitoModel.findOneAndUpdate({_id: id }, dto, { new: true }).populate("recibido_por");
+  return updated ? mapEntityToDto(updated) : null;
 };
 
 const remove = async (id: string) => {
-  return await RemitoModel.findOneAndDelete({ _id: id });
+  const deleted = await RemitoModel.findOneAndDelete({ _id: id }).populate("recibido_por");
+  return deleted ? mapEntityToDto(deleted) : null;
 };
 
 
 const findByNumero = async (numero: number) => {
-    return await RemitoModel.findOne({numero_remito: numero}).populate("recibido_por");
+  const doc = await RemitoModel.findOne({ numero_remito: numero }).populate("recibido_por");
+  return doc ? mapEntityToDto(doc) : null;
 };
 
-const updateByNumero = async (numero_remito: number, data: Partial<Remito>) => {
-  return await RemitoModel.findOneAndUpdate({ numero_remito }, data, { new: true });
+const updateByNumero = async (numero_remito: number, dto: Partial<RemitoDto>) => {
+  const updated = await RemitoModel.findOneAndUpdate({ numero_remito }, dto,{ new: true }).populate("recibido_por");
+  return updated ? mapEntityToDto(updated) : null;
 };
 
 
 export default {findall, findById, create, update, remove, findByNumero,updateByNumero};
+

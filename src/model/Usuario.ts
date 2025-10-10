@@ -1,7 +1,8 @@
+import { Types } from "mongoose";
 import Rol from "./Rol";
 
 interface Usuario {
-    _id?: string;
+    _id?: Types.ObjectId;
     nombre: string;
     email: string;
     contrasenia: string;
