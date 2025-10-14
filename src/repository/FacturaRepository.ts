@@ -6,45 +6,39 @@ import FacturaDto from "../model/DTO/FacturaDto";
 
 const findall = async () => {
     const docs = await FacturaModel.find().populate("recibido_por");
-    return docs.map(doc => mapEntityToDto(doc.toObject()));
+    return docs.map(mapEntityToDto);
 };
  
 const findById = async (id: string) => {
     const doc = await FacturaModel.findById(id).populate("recibido_por");
-    return doc ? mapEntityToDto(doc.toObject()) : null;
+    return doc ? mapEntityToDto(doc) : null;
 };
 
 const create = async (dto: FacturaDto): Promise<FacturaDto> => {
   const entity = mapDtoToEntity(dto);
   const created = await FacturaModel.create(entity);
-  return mapEntityToDto(created.toObject());
+  return mapEntityToDto(created);
 };
+
 const update = async (id: string, dto: Partial<FacturaDto>): Promise<FacturaDto | null> => {
-  const updateData: any = { ...dto };
-  if (dto.recibido_por)
-  updateData.recibido_por = new Types.ObjectId(
-    typeof dto.recibido_por === "string"
-      ? dto.recibido_por
-      : dto.recibido_por._id
-  );
-  const updated = await FacturaModel.findOneAndUpdate({ _id: id }, updateData, { new: true }).populate("recibido_por");
-  return updated ? mapEntityToDto(updated.toObject()) : null;
+  const updated = await FacturaModel.findOneAndUpdate({ _id: id }, dto, { new: true }).populate("recibido_por");
+  return updated ? mapEntityToDto(updated) : null;
 };
 
 
 const remove = async (id: string): Promise<FacturaDto | null> => {
   const deleted = await FacturaModel.findOneAndDelete({ _id: id });
-  return deleted ? mapEntityToDto(deleted.toObject()) : null;
+  return deleted ? mapEntityToDto(deleted) : null;
 };
 
 const findByNumero = async (numero_factura: number): Promise<FacturaDto | null> => {
   const doc = await FacturaModel.findOne({ numero_factura }).populate("recibido_por");
-  return doc ? mapEntityToDto(doc.toObject()) : null;
+  return doc ? mapEntityToDto(doc) : null;
 };
 
 const findByRemito = async (numero_remito: number): Promise<FacturaDto | null> => {
   const doc = await FacturaModel.findOne({ numero_remito }).populate("recibido_por");
-  return doc ? mapEntityToDto(doc.toObject()) : null;
+  return doc ? mapEntityToDto(doc) : null;
 };
 
 

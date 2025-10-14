@@ -3,21 +3,17 @@ import UsuarioDTO from "../model/DTO/UsuarioDto";
 import Usuario from "../model/Usuario";
 
 
-export const mapDtoToEntity = (dto: UsuarioDTO): Usuario => {
-  if (!dto) return null as any;
-    return {
+export const mapDtoToEntity = (dto: UsuarioDTO): Usuario => ({
     ...dto,
     _id: dto._id ? new Types.ObjectId(dto._id) : undefined,
    
-  };
-};
+  });
+
 
 export const mapEntityToDto = (usuario: any): UsuarioDTO => {
+  const plano = typeof usuario?.toObject === "function" ? usuario.toObject() : usuario;
   return {
-    _id: usuario._id?.toString(),
-    nombre: usuario.nombre,
-    email: usuario.email,
-    contrasenia: usuario.contrasenia,
-    rol: usuario.rol,
+    ...plano,
+    _id: plano._id?.toString(),
   };
 };

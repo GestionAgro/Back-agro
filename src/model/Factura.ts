@@ -12,7 +12,7 @@ export enum TipoFactura {
 }
 
 interface Factura {
-    _id:  Types.ObjectId; 
+    _id?:  Types.ObjectId; 
     numero_remito: number;
     numero_factura: number; 
     tipo_factura: TipoFactura;

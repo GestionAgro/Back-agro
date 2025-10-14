@@ -1,10 +1,10 @@
 import { Types } from "mongoose";
 import RemitoDto from "../model/DTO/RemitoDto";
-import Remito from "../model/Remito";
+import Remito, { ProductoDetalleRemito } from "../model/Remito";
 
 export const mapDtoToEntity = (dto: RemitoDto): Remito => ({
   ...dto,
-  _id: new Types.ObjectId(dto._id ?? undefined),
+  _id: dto._id ? new Types.ObjectId(dto._id) : undefined,
   recibido_por: new Types.ObjectId(
     typeof dto.recibido_por === "string" ? dto.recibido_por : dto.recibido_por._id
   ),
@@ -16,25 +16,19 @@ export const mapDtoToEntity = (dto: RemitoDto): Remito => ({
 
 
 export const mapEntityToDto = (remito: any): RemitoDto => {
-  const recibido = remito.recibido_por;
+  const plano = typeof remito?.toObject === "function" ? remito.toObject() : remito;
+  const recibido = plano.recibido_por;
 
   return {
-    _id: remito._id?.toString(),
-    numero_remito: remito.numero_remito,
-    fecha: remito.fecha,
-    empresa: remito.empresa,
-    estado: remito.estado,
-    productos: remito.productos.map((p: any) => ({
+    ...plano,
+    _id: plano._id?.toString(),
+    productos: plano.productos.map((p: ProductoDetalleRemito) => ({
+      ...p,
       id_producto: p.id_producto?.toString(),
-      nombre_producto: p.nombre_producto,
-      cantidad: p.cantidad,
     })),
     recibido_por:
       typeof recibido === "object" && recibido._id
-        ? {
-            _id: recibido._id.toString(),
-            nombre: recibido.nombre,
-          }
+        ? {...recibido, _id: recibido._id.toString()}
         : recibido?.toString(),
   };
 };
