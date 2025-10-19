@@ -1,7 +1,9 @@
+import { Types } from "mongoose";
+
 interface AuditoriaFactura {
-  _id?: string;
-  id_factura: string; 
-  id_usuario: string; 
+  _id?: Types.ObjectId;
+  id_factura: Types.ObjectId; 
+  id_usuario: Types.ObjectId; 
   campo_modificado: string;
   valor_anterior: string;
   valor_nuevo: string;

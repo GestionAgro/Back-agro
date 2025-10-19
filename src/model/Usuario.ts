@@ -7,6 +7,7 @@ interface Usuario {
     email: string;
     contrasenia: string;
     rol: Rol;
+    firebaseUid?: string;
 }
 
 export default Usuario;

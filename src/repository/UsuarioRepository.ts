@@ -37,5 +37,9 @@ const findByEmail = async (email: string) => {
   return doc ? mapEntityToDto(doc) : null;
 };
 
+const findByFirebaseUid = async (firebaseUid: string) => {
+  const doc = await UsuarioModel.findOne({ firebaseUid }); 
+  return doc ? mapEntityToDto(doc) : null; 
+};
 
-export default{findAll,findById,create,update,remove,findByEmail};
+export default{findAll,findById,create,update,remove,findByEmail,findByFirebaseUid};

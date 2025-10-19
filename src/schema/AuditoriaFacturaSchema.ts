@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import AuditoriaFactura from '../model/AuditoriaFactura';
 
-const auditoriaFacturaSchema = new Schema({
+const auditoriaFacturaSchema = new Schema<AuditoriaFactura>({
   id_factura: { type: Schema.Types.ObjectId, ref: 'Factura', required: true },
   id_usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
   campo_modificado: { type: String, required: true },

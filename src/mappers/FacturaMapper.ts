@@ -8,11 +8,13 @@ export const mapDtoToEntity = (dto: FacturaDto): Factura => ({
   recibido_por: new Types.ObjectId(
     typeof dto.recibido_por === "string" ? dto.recibido_por : dto.recibido_por._id
   ),
+  id_usuario: new Types.ObjectId(dto.id_usuario),
 });
 
 export const mapEntityToDto = (factura: any): FacturaDto => {
   const plano = typeof factura?.toObject === "function" ? factura.toObject() : factura;
   const recibido = plano.recibido_por;
+  const usuario = plano.id_usuario;
 
   return {
     ...plano,
@@ -21,6 +23,11 @@ export const mapEntityToDto = (factura: any): FacturaDto => {
       typeof recibido === "object" && recibido._id
         ? { ...recibido, _id: recibido._id.toString() }
         : recibido?.toString(),
+        
+   id_usuario: typeof usuario === "object" && usuario._id
+        ? { _id: usuario._id.toString() }
+        : usuario?.toString(),
   };
 };
+
 

@@ -9,6 +9,8 @@ import RemitosRoutes from './routes/RemitosRoutes';
 import FacturasRoutes from './routes/FacturasRoutes';
 import PersonasRoutes from './routes/PersonaRoutes';
 import ProductoRoutes from './routes/ProductoRoutes';
+import EventoRoutes from  './routes/EventoRoutes';
+import AuditoriaFacturaRoutes from './routes/AuditoriaFacturaRoutes';
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -31,8 +33,15 @@ app.use('/facturas', FacturasRoutes);
 //peronas
 app.use('/personas', PersonasRoutes);
 
-// producto
+// productos
 app.use('/producto', ProductoRoutes);
+
+// eventos
+app.use('/eventos', EventoRoutes);
+
+//auditoria facturas
+app.use('/auditoriaFactura', AuditoriaFacturaRoutes);
+
 
 app.get('/', (req, res) => {
   res.json('Hello World');

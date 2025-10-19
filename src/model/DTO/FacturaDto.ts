@@ -27,6 +27,8 @@ interface FacturaDto {
     importe: number;
     recibido_por: PersonaResumenDto;
     estado: EstadoFactura;
+    id_usuario: string;
+
     
 }
 

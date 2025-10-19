@@ -3,6 +3,8 @@ import Remito, { EstadoRemito } from "../model/Remito";
 import ProductoService from "./ProductoService";
 import ProductoRepository from "../repository/ProductoRepository";
 import RemitoDto from "../model/DTO/RemitoDto";
+import EventoRepository from "../repository/EventoRepository";
+import EventoService from "./EventoService";
 
 const listarRemitos = async () => {
   return await RemitoRepository.findall();
@@ -86,7 +88,21 @@ remitoDto.fecha = validarFecha(remitoDto.fecha);
   }
 
   remitoDto.productos = productosActualizados;
-  return await RemitoRepository.create(remitoDto);
+
+  const nuevoRemito  = await RemitoRepository.create(remitoDto);
+  if (!nuevoRemito._id) {
+  throw new Error("Error: no se generó ID para el remito");
+}
+
+  await EventoRepository.create({
+  id_persona: remitoDto.recibido_por.toString(), 
+  id_entidad: nuevoRemito._id.toString(),
+  fechaYhora: new Date(),
+  tipo_operacion: "CREACIÓN",
+  entidad_afectada: "Remito",
+  descripcion: `Se creó un nuevo remito de ${remitoDto.empresa}`
+});
+  return nuevoRemito ;
 };
 
 

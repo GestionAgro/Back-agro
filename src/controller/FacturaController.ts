@@ -26,7 +26,9 @@ export const obtenerFactura = async (req: Request, res: Response) => {
 
 export const crearFactura= async (req: Request, res: Response) => {
   try {
-    const nuevo = await FacturaService.crearFactura(req.body);
+    const uid = res.locals.user?.uid;
+
+    const nuevo = await FacturaService.crearFactura(req.body, uid);
     res.status(201).json(nuevo);
   } catch (error:any) {
     console.error("error exacto en crear factura:",error);
@@ -36,7 +38,9 @@ export const crearFactura= async (req: Request, res: Response) => {
 
 export const actualizarFactura = async (req: Request, res: Response) => {
   try {
-    const actualizado = await FacturaService.actualizarFactura(req.params.id, req.body);
+     const uid = res.locals.user?.uid;
+     const {id} = req.params;
+    const actualizado = await FacturaService.actualizarFactura(id, req.body, uid);
     if (!actualizado) {
       res.status(404).json({ message: "factura no encontrada" });
     } else {
@@ -50,7 +54,9 @@ export const actualizarFactura = async (req: Request, res: Response) => {
 
 export const borrarFactura = async (req: Request, res: Response) => {
   try {
-    const eliminado = await FacturaService.borrarFactura(req.params.id);
+    const uid = res.locals.user?.uid;
+    const {id} = req.params;
+    const eliminado = await FacturaService.borrarFactura(id,uid);
     if (!eliminado) {
       res.status(404).json({ message: "factura no encontrada" });
     } else {
@@ -81,9 +87,10 @@ export const obtenerFacturaPorNumero = async (req: Request, res: Response) => {
 export const asociarRemitoAFactura = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const uid = res.locals.user?.uid;
     const { numero_remito } = req.body;
 
-    const actualizada = await FacturaService.asociarRemitoAFactura(id, numero_remito);
+    const actualizada = await FacturaService.asociarRemitoAFactura(id, numero_remito, uid);
 
     res.status(200).json(actualizada);
   } catch (error: any) {

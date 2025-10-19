@@ -7,6 +7,7 @@ interface UsuarioDTO {
     email: string;
     contrasenia: string;
     rol: Rol;
+    firebaseUid?: string;
 }
 
 export default UsuarioDTO;
