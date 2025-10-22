@@ -1,5 +1,5 @@
 import FacturaRepository from "../repository/FacturaRepository";
-import Factura, { EstadoFactura } from "../model/Factura";
+import Factura, { EstadoFactura, TipoFactura } from "../model/Factura";
 import RemitoService from "./RemitoService";
 import FacturaDto from "../model/DTO/FacturaDto";
 import EventoService from "./EventoService";
@@ -75,12 +75,23 @@ const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, fi
     throw new Error ("Error al actualizar la factura")
   }
 
+  const valorAnterior= { 
+    tipo_factura: facturaExistente.tipo_factura !== facturaActualizada.tipo_factura ? facturaExistente.tipo_factura : "-",
+    empresa: facturaExistente.empresa !== facturaActualizada.empresa ? facturaExistente.empresa : "-", 
+    importe: facturaExistente.importe !== facturaActualizada.importe ? facturaExistente.importe : "-",};
+
+  const valorNuevo = {
+  tipo_factura: facturaExistente.tipo_factura !== facturaActualizada.tipo_factura ? facturaActualizada.tipo_factura : "-",
+  empresa: facturaExistente.empresa !== facturaActualizada.empresa ? facturaActualizada.empresa : "-",
+  importe: facturaExistente.importe !== facturaActualizada.importe ? facturaActualizada.importe : "-" };
+
+
   await AuditoriaFacturaService.registrarAuditoria({
     id_factura: facturaActualizada._id.toString(),
     id_usuario: usuario._id.toString(),
     campo_modificado: "ACTUALIZACIÓN",
-    valor_anterior: JSON.stringify(facturaExistente),
-    valor_nuevo: JSON.stringify(facturaActualizada),
+    valor_anterior: JSON.stringify(valorAnterior),
+    valor_nuevo: JSON.stringify(valorNuevo),
     descripcion: `Factura ${facturaActualizada.numero_factura} actualizada por ${usuario.nombre}`,
   });
    return facturaActualizada;
@@ -93,7 +104,6 @@ const borrarFactura = async (id: string, firebaseUid: string) => {
   const facturaExistente = await FacturaRepository.findById(id);
   if (!facturaExistente) throw new Error("Factura no encontrada");
 
-  await FacturaRepository.remove(id);
   await AuditoriaFacturaService.registrarAuditoria({
     id_factura: id,
     id_usuario: usuario._id.toString(),
@@ -102,6 +112,8 @@ const borrarFactura = async (id: string, firebaseUid: string) => {
     valor_nuevo: "-",
     descripcion: `Factura ${facturaExistente.numero_factura} eliminada por ${usuario.nombre}`,
   });
+
+  await FacturaRepository.remove(id);
 
   return facturaExistente;
 };
@@ -140,12 +152,13 @@ const asociarRemitoAFactura = async (id: string, numero_remito: number, firebase
 
 
   await RemitoService.actualizarEstado(numero_remito);
+  
   await AuditoriaFacturaService.registrarAuditoria({
     id_factura: facturaActualizada._id.toString(),
     id_usuario: usuario._id.toString(),
     campo_modificado: "ASOCIAR REMITO",
-    valor_anterior: JSON.stringify(facturaExistente),
-    valor_nuevo: JSON.stringify(facturaActualizada),
+    valor_anterior: JSON.stringify({numero_remito: "-", estado: facturaExistente.estado,}),
+    valor_nuevo: JSON.stringify({numero_remito: facturaActualizada.numero_remito, estado: facturaActualizada.estado}),
     descripcion: `Se asoció el remito ${numero_remito} a la factura ${facturaActualizada.numero_factura} por ${usuario.nombre}`
   });
 

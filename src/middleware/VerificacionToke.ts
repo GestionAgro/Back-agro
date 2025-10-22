@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import admin from "../config/FirebaseAdmin";
 
 export const verificarTokenFirebase = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split("Bearer ")[1];
+  const token = req.headers.authorization?.split(' ')[1];
 
   if (!token) {
      res.status(401).json({ error: "Token no proporcionado" });

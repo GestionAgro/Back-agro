@@ -20,7 +20,7 @@ const findByFactura = async (id_factura: string) => {
 };
 
 const findById = async (id: string) => {
-  const doc = await AuditoriaFacturaModel.findById(id).populate("id_usuario").populate("id_factura");
+  const doc = await AuditoriaFacturaModel.findById(id).populate("id_usuario");
   return doc ? mapEntityToDto(doc) : null;
 };
 
