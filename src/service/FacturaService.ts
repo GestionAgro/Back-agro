@@ -14,6 +14,19 @@ const obtenerFactura = async (id: string) => {
   return await FacturaRepository.findById(id);
 };
 
+export const formatearFacturaParaAuditoria = (factura: any) => {
+  const {numero_factura,tipo_factura,empresa,importe,recibido_por,estado,fecha,} = factura;
+
+  const recibidoFormateado = recibido_por
+    ? {
+        nombre: recibido_por.nombre,
+        tipo_persona: recibido_por.tipo_persona,
+      }
+    : null;
+
+  return {numero_factura,tipo_factura,empresa,importe,recibido_por: recibidoFormateado,estado,fecha,};
+};
+
 const crearFactura = async (facturadto: FacturaDto, firebaseUid: string) => {
   const existe = await FacturaRepository.findByNumero(facturadto.numero_factura);
   if (existe) {
@@ -42,15 +55,18 @@ const crearFactura = async (facturadto: FacturaDto, firebaseUid: string) => {
 }
 
 const facturaCompleta = await FacturaRepository.findById(nuevaFactura._id); 
+const facturaFormateada = formatearFacturaParaAuditoria(facturaCompleta);
 
 
   if (nuevaFactura._id) {
     await AuditoriaFacturaService.registrarAuditoria({
       id_factura: nuevaFactura._id.toString(),
-       id_usuario:usuario._id.toString(), 
+      id_usuario:usuario._id.toString(), 
+      numero_factura: nuevaFactura.numero_factura, 
+      nombre_usuario: usuario.nombre,
       campo_modificado: "CREACIÓN",
       valor_anterior: "-",
-      valor_nuevo: JSON.stringify(facturaCompleta),
+      valor_nuevo: JSON.stringify(facturaFormateada),
       descripcion: `Se creó la factura número ${nuevaFactura.numero_factura} por ${usuario.nombre}`,
     });
   }
@@ -89,6 +105,8 @@ const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, fi
   await AuditoriaFacturaService.registrarAuditoria({
     id_factura: facturaActualizada._id.toString(),
     id_usuario: usuario._id.toString(),
+    numero_factura: facturaActualizada.numero_factura,
+    nombre_usuario: usuario.nombre,
     campo_modificado: "ACTUALIZACIÓN",
     valor_anterior: JSON.stringify(valorAnterior),
     valor_nuevo: JSON.stringify(valorNuevo),
@@ -102,13 +120,17 @@ const borrarFactura = async (id: string, firebaseUid: string) => {
   if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
 
   const facturaExistente = await FacturaRepository.findById(id);
+  const facturaFormateada = formatearFacturaParaAuditoria(facturaExistente);
+
   if (!facturaExistente) throw new Error("Factura no encontrada");
 
   await AuditoriaFacturaService.registrarAuditoria({
     id_factura: id,
     id_usuario: usuario._id.toString(),
+    numero_factura: facturaExistente.numero_factura,
+    nombre_usuario: usuario.nombre,
     campo_modificado: "ELIMINACIÓN",
-    valor_anterior: JSON.stringify(facturaExistente),
+    valor_anterior: JSON.stringify(facturaFormateada),
     valor_nuevo: "-",
     descripcion: `Factura ${facturaExistente.numero_factura} eliminada por ${usuario.nombre}`,
   });
@@ -156,6 +178,8 @@ const asociarRemitoAFactura = async (id: string, numero_remito: number, firebase
   await AuditoriaFacturaService.registrarAuditoria({
     id_factura: facturaActualizada._id.toString(),
     id_usuario: usuario._id.toString(),
+    numero_factura: facturaActualizada.numero_factura,
+    nombre_usuario: usuario.nombre,
     campo_modificado: "ASOCIAR REMITO",
     valor_anterior: JSON.stringify({numero_remito: "-", estado: facturaExistente.estado,}),
     valor_nuevo: JSON.stringify({numero_remito: facturaActualizada.numero_remito, estado: facturaActualizada.estado}),

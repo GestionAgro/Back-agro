@@ -25,8 +25,9 @@ export const obtenerProducto = async (req: Request, res: Response) => {
 };
 
 export const crearProducto = async (req: Request, res: Response) => {
-  try {
-    const nuevo = await ProductoService.crearProducto(req.body);
+  try {console.log(req.body);
+    const uid = res.locals?.user?.uid;
+    const nuevo = await ProductoService.crearProducto(req.body,uid);
     res.status(201).json(nuevo);
   } catch (error) {
     res.status(400).json({ error: "Error al crear producto", details: error });
@@ -35,7 +36,8 @@ export const crearProducto = async (req: Request, res: Response) => {
 
 export const actualizarProducto = async (req: Request, res: Response) => {
   try {
-    const actualizado = await ProductoService.actualizarProducto(req.params.id, req.body);
+    const uid = res.locals?.user?.uid;
+    const actualizado = await ProductoService.actualizarProducto(req.params.id, req.body,uid);
     if (!actualizado) { 
         res.status(404).json({ message: "Producto no encontrado" });
     return;
@@ -48,7 +50,8 @@ export const actualizarProducto = async (req: Request, res: Response) => {
 
 export const eliminarProducto = async (req: Request, res: Response) => {
   try {
-    await ProductoService.eliminarProducto(req.params.id);
+    const uid = res.locals?.user?.uid;
+    await ProductoService.eliminarProducto(req.params.id,uid);
     res.status(200).json({ message: "Producto eliminado correctamente" });
   } catch (error) {
     res.status(400).json({ error: "Error al eliminar producto", details: error });
@@ -56,9 +59,10 @@ export const eliminarProducto = async (req: Request, res: Response) => {
 };
 
 export const ajustarStock = async (req: Request, res: Response) => {
-  try {
+  try { 
+    const uid = res.locals?.user?.uid;
     const { cantidad } = req.body;
-    const actualizado = await ProductoService.ajustarStock(req.params.id, cantidad);
+    const actualizado = await ProductoService.ajustarStock(req.params.id, cantidad, uid);
     res.status(200).json(actualizado);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

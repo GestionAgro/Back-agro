@@ -27,7 +27,8 @@ export const obtenerRemito = async (req: Request, res: Response) => {
 export const crearRemito = async (req: Request, res: Response) => {
   try {
      console.log(req.body);
-    const nuevo = await RemitoService.crearRemito(req.body);
+    const uid = res.locals?.user?.uid;
+    const nuevo = await RemitoService.crearRemito(req.body,uid);
     res.status(201).json(nuevo);
   } catch (error:any) {
     console.error("error exacto en crer remit:",error);
@@ -37,7 +38,8 @@ export const crearRemito = async (req: Request, res: Response) => {
 
 export const actualizarRemito = async (req: Request, res: Response) => {
   try {
-    const actualizado = await RemitoService.actualizarRemito(req.params.id, req.body);
+    const uid = res.locals?.user?.uid;
+    const actualizado = await RemitoService.actualizarRemito(req.params.id, req.body,uid);
     if (!actualizado) {
       res.status(404).json({ message: "Remito no encontrado" });
     } else {
@@ -52,7 +54,8 @@ export const actualizarRemito = async (req: Request, res: Response) => {
 
 export const borrarRemito = async (req: Request, res: Response) => {
   try {
-    const eliminado = await RemitoService.borrarRemito(req.params.id);
+    const uid = res.locals?.user?.uid;
+    const eliminado = await RemitoService.borrarRemito(req.params.id, uid);
     if (!eliminado) {
       res.status(404).json({ message: "Remito no encontrado" });
     } else {

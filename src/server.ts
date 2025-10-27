@@ -11,6 +11,8 @@ import PersonasRoutes from './routes/PersonaRoutes';
 import ProductoRoutes from './routes/ProductoRoutes';
 import EventoRoutes from  './routes/EventoRoutes';
 import AuditoriaFacturaRoutes from './routes/AuditoriaFacturaRoutes';
+import AuditoriaRemitoRoutes from './routes/AuditoriaRemitoRoutes';
+import AuditoriaStockRoutes from './routes/AuditoriaStockRoutes';
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -42,6 +44,11 @@ app.use('/eventos', EventoRoutes);
 //auditoria facturas
 app.use('/auditoriaFactura', AuditoriaFacturaRoutes);
 
+// auditoria remitos
+app.use('/auditoriaRemito', AuditoriaRemitoRoutes);
+
+// auditoria remitos
+app.use('/auditoriaStock', AuditoriaStockRoutes);
 
 app.get('/', (req, res) => {
   res.json('Hello World');

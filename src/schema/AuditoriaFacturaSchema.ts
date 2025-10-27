@@ -8,7 +8,9 @@ const auditoriaFacturaSchema = new Schema<AuditoriaFactura>({
   valor_anterior: { type: String, required: true },
   valor_nuevo: { type: String, required: true },
   fecha_y_hora: { type: Date, default: Date.now },
-  descripcion: { type: String, required: true }
+  descripcion: { type: String, required: true },
+  numero_factura: { type: Number },
+  nombre_usuario: { type: String },
 }, { versionKey: false });
 
 export const AuditoriaFacturaModel = model<AuditoriaFactura>('AuditoriaFactura', auditoriaFacturaSchema);
