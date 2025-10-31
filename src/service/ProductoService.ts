@@ -3,6 +3,8 @@ import Producto from "../model/Producto";
 import ProductoDTO from "../model/DTO/ProductoDto";
 import UsuarioRepository from "../repository/UsuarioRepository";
 import AuditoriaStockService from "./AuditoriaStockService";
+import PersonaRepository from "../repository/PersonaRepository";
+import EventoService from "./EventoService";
 
 const listarProductos = async () => {
   return await ProductoRepository.findall();
@@ -105,15 +107,21 @@ const eliminarProducto = async (id: string, firebaseUid: string) => {
 }
 
 
-const ajustarStock = async (id: string, cantidad: number, firebaseUid:string) =>{
+const ajustarStock = async (id: string, cantidad: number, firebaseUid:string, id_persona_retiro: string) =>{
     const producto = await ProductoRepository.findById(id);
     if(!producto) throw new Error(" producto no encontrado");
 
     const nuevaCantidad = producto.cantidad_actual + cantidad;
     if(nuevaCantidad < 0)   throw new Error("sin stock suficinete");
-    const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
-  if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
 
+    const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
+    if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
+
+    if (!id_persona_retiro) throw new Error("Debe indicar quién retira el producto");
+  const persona = await PersonaRepository.obtenerPorId(id_persona_retiro);
+  if (!persona || !persona._id) throw new Error("Persona que retira no encontrada");
+  
+  
   const productoActualizado = await ProductoRepository.update(id, {
     cantidad_actual: nuevaCantidad,
   });
@@ -136,7 +144,15 @@ const ajustarStock = async (id: string, cantidad: number, firebaseUid:string) =>
     valor_nuevo: JSON.stringify(valorNuevo),
     descripcion: `Stock ajustado en ${producto.nombre_producto} por ${usuario.nombre} (${cantidad > 0 ? "+" : ""}${cantidad})`,
   });
-
+   await EventoService.crearEvento({
+    id_persona: persona._id.toString(),
+    fechaYhora: new Date(),
+    tipo_operacion: "EGRESO",
+    entidad_afectada: "Producto",
+    id_entidad: producto._id!.toString(),
+    descripcion: `Retiro de ${Math.abs(cantidad)} unidades de ${producto.nombre_producto} por ${persona.nombre}`,
+  });
+  
   return productoActualizado;
 };
 

@@ -31,4 +31,19 @@ const borrarUsuario = async (id: string) => {
     return await UsuarioRepository.remove(id);
 };
 
-export default { listarUsuarios,obtenerUsuario,crearUsuario,actualizarUsuario,borrarUsuario };
+const obtenerRolPorUid = async (uid: string) => {
+  const usuario = await UsuarioRepository.findByFirebaseUid(uid);
+  if (!usuario)
+     throw new Error("Usuario no encontrado");
+  return usuario.rol;
+};
+
+const cambiarRol = async (id: string, nuevoRol: Rol) => {
+  if (!Object.values(Rol).includes(nuevoRol)) {
+    throw new Error("Rol inválido");
+  }
+  return await UsuarioRepository.updateRol(id, nuevoRol);
+};
+
+
+export default { listarUsuarios,obtenerUsuario,crearUsuario,actualizarUsuario,borrarUsuario, obtenerRolPorUid,cambiarRol};

@@ -61,8 +61,8 @@ export const eliminarProducto = async (req: Request, res: Response) => {
 export const ajustarStock = async (req: Request, res: Response) => {
   try { 
     const uid = res.locals?.user?.uid;
-    const { cantidad } = req.body;
-    const actualizado = await ProductoService.ajustarStock(req.params.id, cantidad, uid);
+    const { cantidad, id_persona_retiro } = req.body;
+    const actualizado = await ProductoService.ajustarStock(req.params.id, cantidad, uid,id_persona_retiro);
     res.status(200).json(actualizado);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

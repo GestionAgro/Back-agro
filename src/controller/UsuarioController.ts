@@ -60,3 +60,30 @@ export const borrarUsuario = async (req: Request, res: Response) => {
   }
   
 };
+
+export const obtenerRolPorUid = async (req: Request, res: Response) => {
+  try {
+    const { uid } = req.params;
+    const rol = await UsuarioService.obtenerRolPorUid(uid);
+    res.status(200).json({ rol });
+  } catch (error: any) {
+    res.status(error.message === "Usuario no encontrado" ? 404 : 500).json({ error: error.message });
+  }
+};
+
+export const cambiarRol = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { rol } = req.body;
+
+    const actualizado = await UsuarioService.cambiarRol(id, rol);
+    if (!actualizado) {
+       res.status(404).json({ error: "Usuario no encontrado" });
+      return;
+      }
+
+    res.status(200).json(actualizado);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message || "Error al cambiar el rol" });
+  }
+};

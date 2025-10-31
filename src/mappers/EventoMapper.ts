@@ -21,8 +21,10 @@ export const mapEntityToDto = (evento: any): EventoDto => {
     id_entidad: plano.id_entidad?.toString(),
     id_persona:
       typeof persona === "object" && persona._id
-        ? { _id: persona._id.toString() }
+        ?  persona._id.toString() 
         : persona?.toString(),
+    nombre: typeof persona === "object" && persona.nombre ? persona.nombre : "",
   };
+};
     
-  };
+  

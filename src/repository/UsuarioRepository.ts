@@ -42,4 +42,10 @@ const findByFirebaseUid = async (firebaseUid: string) => {
   return doc ? mapEntityToDto(doc) : null; 
 };
 
-export default{findAll,findById,create,update,remove,findByEmail,findByFirebaseUid};
+const updateRol = async (id: string, nuevoRol: string) => {
+  const updated = await UsuarioModel.findByIdAndUpdate(id, { rol: nuevoRol }, { new: true });
+  return updated ? mapEntityToDto(updated) : null;
+};
+
+
+export default{findAll,findById,create,update,remove,findByEmail,findByFirebaseUid,updateRol};
