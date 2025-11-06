@@ -99,3 +99,13 @@ export const asociarRemitoAFactura = async (req: Request, res: Response) => {
   }
 };
 
+export const reporteMensualFactura = async (req: Request, res: Response) =>{
+  try{
+    const reporte = await FacturaService.reporteMensualFacturas();
+    res.status(200).json(reporte);
+  }catch (error) {
+    console.error("Error al generar reporte mensual de facturas:", error);
+    res.status(500).json({ error: "Error al generar reporte mensual" });
+  }
+}
+

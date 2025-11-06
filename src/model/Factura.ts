@@ -15,6 +15,7 @@ interface Factura {
     _id?:  Types.ObjectId; 
     numero_remito: number;
     numero_factura: number; 
+    fecha: Date;
     tipo_factura: TipoFactura;
     empresa: string;
     importe: number;

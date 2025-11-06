@@ -3,6 +3,8 @@ import Factura from "../model/Factura";
 import { FacturaModel } from "../schema/FacturaSchema";
 import { mapDtoToEntity, mapEntityToDto } from "../mappers/FacturaMapper";
 import FacturaDto from "../model/DTO/FacturaDto";
+import { reporteMensualFactura } from "../controller/FacturaController";
+import { isGcsTfliteModelOptions } from "firebase-admin/lib/machine-learning/machine-learning-api-client";
 
 const findall = async () => {
     const docs = await FacturaModel.find().populate("recibido_por");
@@ -42,6 +44,23 @@ const findByRemito = async (numero_remito: number): Promise<FacturaDto | null> =
 };
 
 
+const reporteMensual = async () => {
+  const resultado = await FacturaModel.aggregate([
+    {
+      $group: {
+        _id: {$month: "$fecha"},
+        totalImporte: {$sum: "$importe"},
+      },
+    },
+    {$sort: {"_id": 1}},
+  ])
+
+  return resultado.map((item) => ({
+    mes: item._id,
+    totalImporte: item.totalImporte,
+  }));
+}
 
 
-export default {findall, findById, create, update, remove, findByNumero,findByRemito};
+
+export default {findall, findById, create, update, remove, findByNumero,findByRemito,reporteMensual};

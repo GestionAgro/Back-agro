@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { listarRemitos, obtenerRemito, crearRemito, actualizarRemito, borrarRemito,obtenerRemitoPorNumero } from "../controller/RemitoController";
+import { listarRemitos, obtenerRemito, crearRemito, actualizarRemito, borrarRemito,obtenerRemitoPorNumero, reporteMensualRemitos } from "../controller/RemitoController";
 import { verificarTokenFirebase } from "../middleware/VerificacionToke";
 
 const router = Router();
 
 router.get("/", listarRemitos);
+router.get("/reporte/mensual", reporteMensualRemitos)
 router.get("/numero/:numero", obtenerRemitoPorNumero);
 router.get("/:id", obtenerRemito);
 router.post("/", verificarTokenFirebase,crearRemito);

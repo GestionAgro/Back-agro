@@ -83,4 +83,15 @@ export const obtenerRemitoPorNumero = async (req: Request, res: Response) => {
   }
 };
 
+export const reporteMensualRemitos = async (req: Request, res: Response) => {
+  try {
+    const reporte = await RemitoService.reporteMensualRemitos();
+    res.status(200).json(reporte);
+  } catch (error) {
+    console.error("Error al generar reporte mensual de remitos:", error);
+    res.status(500).json({ error: "Error al generar reporte mensual de remitos" });
+  }
+};
+
+
 

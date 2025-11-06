@@ -42,6 +42,23 @@ const updateByNumero = async (numero_remito: number, dto: Partial<RemitoDto>) =>
   return updated ? mapEntityToDto(updated) : null;
 };
 
+const reporteMensualRemitos = async () => {
+  const resultado = await RemitoModel.aggregate([
+    {
+      $group: {
+        _id: {$month: "$fecha"},
+        totalRemitos: {$sum:1},
+      },
+    },
+    {$sort: {"_id": 1}},
+  ]);
 
-export default {findall, findById, create, update, remove, findByNumero,updateByNumero};
+  return resultado.map((item)=> ({
+    mes: item._id,
+    totalRemitos: item.totalRemitos,
+  }))
+}
+
+
+export default {findall, findById, create, update, remove, findByNumero,updateByNumero, reporteMensualRemitos};
 

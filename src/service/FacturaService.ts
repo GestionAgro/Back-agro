@@ -27,11 +27,44 @@ export const formatearFacturaParaAuditoria = (factura: any) => {
   return {numero_factura,tipo_factura,empresa,importe,recibido_por: recibidoFormateado,estado,fecha,};
 };
 
+
+
+const validarFecha = (fecha: Date) => {
+  const fechaValida = new Date(fecha);
+  const hoy = new Date();
+  const fechaMinima = new Date("2000-01-01");
+
+  if (isNaN(fechaValida.getTime())) {
+    throw new Error("Fecha inválida");
+  }
+
+  if (fechaValida > hoy) {
+    throw new Error("La fecha no puede ser futura");
+  }
+
+  if (fechaValida < fechaMinima) {
+    throw new Error("Fecha demasiado antigua");
+  }
+
+  return fechaValida;
+};
+
+
+
+
+
+
 const crearFactura = async (facturadto: FacturaDto, firebaseUid: string) => {
   const existe = await FacturaRepository.findByNumero(facturadto.numero_factura);
   if (existe) {
     throw new Error(`Ya existe una factura con el número ${facturadto.numero_factura}`);
   }
+     if (facturadto.fecha) {
+    facturadto.fecha = validarFecha(facturadto.fecha);
+  } else {
+    facturadto.fecha = new Date(); 
+  }
+
   const nuevaFactura = await FacturaRepository.create(facturadto);
 
   if (nuevaFactura._id) { 
@@ -85,6 +118,13 @@ const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, fi
   if (!facturaExistente) {
     throw new Error("Factura no encontrada");
   }
+ 
+  if (facturadto.fecha) {
+    facturadto.fecha = validarFecha(facturadto.fecha);
+  }
+
+
+
  const facturaActualizada = await FacturaRepository.update(id, facturadto);
   
   if(!facturaActualizada  || !facturaActualizada._id){
@@ -160,6 +200,11 @@ const asociarRemitoAFactura = async (id: string, numero_remito: number, firebase
   const facturaExistente = await FacturaRepository.findById(id);
   if (!facturaExistente) throw new Error("No se encontró la factura para actualizar");
 
+  if (facturaExistente.numero_remito) {
+  throw new Error("La factura ya tiene un remito asociado");
+}
+
+
   const facturaActualizada = await FacturaRepository.update(id, {
     numero_remito,
     estado: EstadoFactura.IMPUTADA
@@ -189,5 +234,9 @@ const asociarRemitoAFactura = async (id: string, numero_remito: number, firebase
   return await FacturaRepository.findById(facturaActualizada._id.toString());
 };
 
+const reporteMensualFacturas = async () => {
+  return await FacturaRepository.reporteMensual();
+}
 
-export default { listarFactura,obtenerFactura,crearFactura,actualizarFactura,borrarFactura, obtenerPorNumero, obtenerPorRemito, asociarRemitoAFactura };
+
+export default { listarFactura,obtenerFactura,crearFactura,actualizarFactura,borrarFactura, obtenerPorNumero, obtenerPorRemito, asociarRemitoAFactura, reporteMensualFacturas};

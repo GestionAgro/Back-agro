@@ -254,4 +254,9 @@ const actualizarEstado = async (numero_remito: number) => {
   });
 };
 
-export default { listarRemitos, obtenerRemito, crearRemito, actualizarRemito, borrarRemito, obtenerPorNumero, actualizarEstado};
+const reporteMensualRemitos = async () => {
+  return await RemitoRepository.reporteMensualRemitos();
+};
+
+
+export default { listarRemitos, obtenerRemito, crearRemito, actualizarRemito, borrarRemito, obtenerPorNumero, actualizarEstado, reporteMensualRemitos};
