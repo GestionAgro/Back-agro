@@ -14,7 +14,7 @@ export const obtenerPersona = async (req: Request, res: Response) => {
   try {
     const persona = await PersonaService.obtenerPorId(req.params.id);
     if (!persona) {
-      res.status(404).json({ message: "Persona no encontrada" });
+      res.status(404).json({ error: "Persona no encontrada" });
       return;
     }
     res.status(200).json(persona);
@@ -27,9 +27,8 @@ export const crearPersona = async (req: Request, res: Response) => {
   try {
     const persona = await PersonaService.crear(req.body);
     res.status(201).json(persona);
-  }catch (error: any) {
-    console.error("Error al crear persona:", error);
-    res.status(400).json({ error: error.message });
+  }catch (error) {
+    res.status(400).json({ error: "Error al crear la persona" });
 }
 };
 
@@ -37,7 +36,7 @@ export const actualizarPersona = async (req: Request, res: Response) => {
   try {
     const persona = await PersonaService.actualizar(req.params.id, req.body);
     if (!persona) {
-      res.status(404).json({ message: "Persona no encontrada" });
+      res.status(404).json({ error: "Persona no encontrada" });
       return;
     }
     res.status(200).json(persona);
@@ -50,10 +49,10 @@ export const borrarPersona = async (req: Request, res: Response) => {
   try {
     const persona = await PersonaService.borrar(req.params.id);
     if (!persona) {
-      res.status(404).json({ message: "Persona no encontrada" });
+      res.status(404).json({ error: "Persona no encontrada" });
       return;
     }
-    res.status(200).json({ message: "Persona eliminada correctamente" });
+    res.status(200).json({ error: "Persona eliminada correctamente" });
   } catch (error) {
     res.status(400).json({ error: "No se pudo eliminar la persona" });
   }

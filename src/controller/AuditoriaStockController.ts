@@ -5,9 +5,8 @@ export const registrarAuditoria = async (req: Request, res: Response) => {
   try {
     const nueva = await AuditoriaStockService.registrarAuditoria(req.body);
     res.status(201).json(nueva);
-  } catch (error: any) {
-    console.error("Error al registrar auditoría de stock:", error);
-    res.status(400).json({ error: error.message || "Error al registrar auditoría" });
+  } catch (error) {
+    res.status(400).json({ error: "Error al registrar auditoría" });
   }
 };
 
