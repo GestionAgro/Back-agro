@@ -9,12 +9,13 @@ import UsuarioRepository from "../repository/UsuarioRepository";
 const listarFactura = async () => {
   return await FacturaRepository.findall();
 };
-
+//------------------------------------------------------------------------------------------------
 const obtenerFactura = async (id: string) => {
   return await FacturaRepository.findById(id);
 };
 
-export const formatearFacturaParaAuditoria = (factura: any) => {
+//------------------------------------------------------------------------------------------------
+export const formatearFacturaParaAuditoria = (factura: FacturaDto) => {
   const {numero_factura,tipo_factura,empresa,importe,recibido_por,estado,fecha,} = factura;
 
   const recibidoFormateado = recibido_por
@@ -28,7 +29,7 @@ export const formatearFacturaParaAuditoria = (factura: any) => {
 };
 
 
-
+//------------------------------------------------------------------------------------------------
 const validarFecha = (fecha: Date) => {
   const fechaValida = new Date(fecha);
   const hoy = new Date();
@@ -51,8 +52,7 @@ const validarFecha = (fecha: Date) => {
 
 
 
-
-
+//------------------------------------------------------------------------------------------------
 
 const crearFactura = async (facturadto: FacturaDto, firebaseUid: string) => {
   const existe = await FacturaRepository.findByNumero(facturadto.numero_factura);
@@ -88,6 +88,9 @@ const crearFactura = async (facturadto: FacturaDto, firebaseUid: string) => {
 }
 
 const facturaCompleta = await FacturaRepository.findById(nuevaFactura._id); 
+if (!facturaCompleta) {
+  throw new Error("No se pudo obtener la factura completa después de crearla");
+}
 const facturaFormateada = formatearFacturaParaAuditoria(facturaCompleta);
 
 
@@ -107,7 +110,7 @@ const facturaFormateada = formatearFacturaParaAuditoria(facturaCompleta);
   return nuevaFactura;
 };
 
-
+//------------------------------------------------------------------------------------------------
 const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, firebaseUid: string) => {
  const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
 
@@ -122,7 +125,6 @@ const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, fi
   if (facturadto.fecha) {
     facturadto.fecha = validarFecha(facturadto.fecha);
   }
-
 
 
  const facturaActualizada = await FacturaRepository.update(id, facturadto);
@@ -155,11 +157,16 @@ const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, fi
    return facturaActualizada;
 };
 
+
+//------------------------------------------------------------------------------------------------
 const borrarFactura = async (id: string, firebaseUid: string) => {
  const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
   if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
 
   const facturaExistente = await FacturaRepository.findById(id);
+  if (!facturaExistente) {
+  throw new Error("No se pudo obtener la factura existente");
+}
   const facturaFormateada = formatearFacturaParaAuditoria(facturaExistente);
 
   if (!facturaExistente) throw new Error("Factura no encontrada");
@@ -180,14 +187,17 @@ const borrarFactura = async (id: string, firebaseUid: string) => {
   return facturaExistente;
 };
 
+//------------------------------------------------------------------------------------------------
 const obtenerPorNumero = async (numero: number) => {
   return await FacturaRepository.findByNumero(numero);
 };
 
+//------------------------------------------------------------------------------------------------
 const obtenerPorRemito = async (numero_remito: number) => {
   return await FacturaRepository.findByRemito(numero_remito);
 };
 
+//------------------------------------------------------------------------------------------------
 const asociarRemitoAFactura = async (id: string, numero_remito: number, firebaseUid:string) => {
   const remito = await RemitoService.obtenerPorNumero(numero_remito);
   if (!remito) {
@@ -234,6 +244,7 @@ const asociarRemitoAFactura = async (id: string, numero_remito: number, firebase
   return await FacturaRepository.findById(facturaActualizada._id.toString());
 };
 
+//------------------------------------------------------------------------------------------------
 const reporteMensualFacturas = async () => {
   return await FacturaRepository.reporteMensual();
 }

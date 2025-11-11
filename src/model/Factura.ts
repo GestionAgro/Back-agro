@@ -21,8 +21,6 @@ interface Factura {
     importe: number;
     recibido_por: Types.ObjectId; 
     estado: EstadoFactura;
-    id_usuario: Types.ObjectId;
-    
 }
 
 export default Factura;

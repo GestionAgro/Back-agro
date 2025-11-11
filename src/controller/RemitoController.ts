@@ -25,7 +25,6 @@ export const obtenerRemito = async (req: Request, res: Response) => {
 
 export const crearRemito = async (req: Request, res: Response) => {
   try {
-     console.log(req.body);
     const uid = res.locals?.user?.uid;
     const nuevo = await RemitoService.crearRemito(req.body,uid);
     res.status(201).json(nuevo);

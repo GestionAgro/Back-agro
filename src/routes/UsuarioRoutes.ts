@@ -3,9 +3,7 @@ import { listarUsuarios,obtenerUsuario,crearUsuario,actualizarUsuario,borrarUsua
 import { soloAdmin } from "../middleware/VerificarAdmin";
 import { verificarTokenFirebase } from "../middleware/VerificacionToke";
 
-
 const router = Router();
-
 
 router.get("/", listarUsuarios);
 router.get("/:id", obtenerUsuario);

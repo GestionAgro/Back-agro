@@ -7,7 +7,8 @@ export enum EstadoRemito {
 export interface ProductoDetalleRemito {
   id_producto:  Types.ObjectId;     
   nombre_producto: string;  
-  cantidad: number;         
+  cantidad: number; 
+  unidad?: String      
 }
 
 interface Remito {

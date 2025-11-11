@@ -10,15 +10,19 @@ const listarProductos = async () => {
   return await ProductoRepository.findall();
 };
 
+//------------------------------------------------------------------------------------------------
 const obtenerProducto = async (id: string) => {
   return await ProductoRepository.findById(id);
 };
 
-export const formatearProductoParaAuditoria = (producto: any) => {
-  const { nombre_producto, cantidad_actual } = producto;
-  return { nombre_producto, cantidad_actual  };
+//------------------------------------------------------------------------------------------------
+export const formatearProductoParaAuditoria = (producto: ProductoDTO) => {
+  const { nombre_producto, cantidad_actual, unidad } = producto;
+  return { nombre_producto, cantidad_actual, unidad  };
 };
 
+
+//------------------------------------------------------------------------------------------------
 const crearProducto = async (productodto: ProductoDTO, firebaseUid: string) => {
     const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
   if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
@@ -39,6 +43,7 @@ const crearProducto = async (productodto: ProductoDTO, firebaseUid: string) => {
 };
 
 
+//------------------------------------------------------------------------------------------------
 const actualizarProducto = async (id: string, data: Partial<ProductoDTO>, firebaseUid:string) => {
  const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
   if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
@@ -58,6 +63,10 @@ const actualizarProducto = async (id: string, data: Partial<ProductoDTO>, fireba
       productoExistente.cantidad_actual !== productoActualizado.cantidad_actual
         ? productoExistente.cantidad_actual
         : "-",
+    unidad:
+    productoExistente.unidad !== productoActualizado.unidad
+      ? productoExistente.unidad
+      : "-",
   };
 
   const valorNuevo = {
@@ -69,6 +78,10 @@ const actualizarProducto = async (id: string, data: Partial<ProductoDTO>, fireba
       productoExistente.cantidad_actual !== productoActualizado.cantidad_actual
         ? productoActualizado.cantidad_actual
         : "-",
+    unidad:
+    productoExistente.unidad !== productoActualizado.unidad
+      ? productoExistente.unidad
+      : "-",
   };
 
   await AuditoriaStockService.registrarAuditoria({
@@ -85,6 +98,7 @@ const actualizarProducto = async (id: string, data: Partial<ProductoDTO>, fireba
 };
 
 
+//------------------------------------------------------------------------------------------------
 const eliminarProducto = async (id: string, firebaseUid: string) => {
   const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
   if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
@@ -107,6 +121,7 @@ const eliminarProducto = async (id: string, firebaseUid: string) => {
 }
 
 
+//------------------------------------------------------------------------------------------------
 const ajustarStock = async (id: string, cantidad: number, firebaseUid:string, id_persona_retiro: string) =>{
     const producto = await ProductoRepository.findById(id);
     if(!producto) throw new Error(" producto no encontrado");
@@ -129,10 +144,12 @@ const ajustarStock = async (id: string, cantidad: number, firebaseUid:string, id
 
   const valorAnterior = {
     cantidad_actual: producto.cantidad_actual,
+     unidad: producto.unidad,
   };
 
   const valorNuevo = {
     cantidad_actual: nuevaCantidad,
+     unidad: producto.unidad,
   };
 
   await AuditoriaStockService.registrarAuditoria({

@@ -9,8 +9,8 @@ const auditoriaRemitoSchema = new Schema<AuditoriaRemito>({
   valor_nuevo: { type: String, required: true },
   fecha_y_hora: { type: Date, default: Date.now },
   descripcion: { type: String, required: true },
-  numero_remito: { type: Number },
-  nombre_usuario: { type: String },
+  numero_remito: { type: Number, required: true },
+  nombre_usuario: { type: String, required: true},
 }, { versionKey: false });
 
 export const AuditoriaRemitoModel = model<AuditoriaRemito>('AuditoriaRemito', auditoriaRemitoSchema);

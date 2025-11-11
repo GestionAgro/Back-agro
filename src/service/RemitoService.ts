@@ -1,24 +1,25 @@
 import RemitoRepository from "../repository/RemitoRepository";
-import Remito, { EstadoRemito } from "../model/Remito";
+import Remito, { EstadoRemito, ProductoDetalleRemito } from "../model/Remito";
 import ProductoService from "./ProductoService";
 import ProductoRepository from "../repository/ProductoRepository";
-import RemitoDto from "../model/DTO/RemitoDto";
+import RemitoDto, { ProductoDetalleRemitoDto } from "../model/DTO/RemitoDto";
 import EventoRepository from "../repository/EventoRepository";
 import EventoService from "./EventoService";
 import AuditoriaRemitoService from "./AuditoriaRemitoService";
 import UsuarioRepository from "../repository/UsuarioRepository";
 import AuditoriaStockService from "./AuditoriaStockService";
+import { Types } from "mongoose";
 
 
 const listarRemitos = async () => {
   return await RemitoRepository.findall();
 };
-
+//------------------------------------------------------------------------------------------------
 const obtenerRemito = async (id: string) => {
   return await RemitoRepository.findById(id);
 }; 
-
-const buscarProducto = async (detalle: any) => {
+//------------------------------------------------------------------------------------------------
+const buscarProducto = async (detalle: ProductoDetalleRemitoDto) => {
   let producto = null;
 
   if (detalle.id_producto) {
@@ -32,10 +33,11 @@ const buscarProducto = async (detalle: any) => {
   return producto;
 };
 
-
-const actualizarOCrearProducto = async (detalle: any, firebaseUid: string) => {
+//------------------------------------------------------------------------------------------------
+const actualizarOCrearProducto = async (detalle: ProductoDetalleRemitoDto, firebaseUid: string) => {
+  
   const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
-  if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
+  if (!usuario?._id) throw new Error("Usuario no encontrado");
 
   let producto = await buscarProducto(detalle);
   let tipoOperacion = "CREACIÓN";
@@ -45,15 +47,20 @@ const actualizarOCrearProducto = async (detalle: any, firebaseUid: string) => {
     if (!producto._id) throw new Error("El producto no tiene ID definido");
 
     const nuevaCantidad = producto.cantidad_actual + detalle.cantidad;
-    valorAnterior = JSON.stringify({ cantidad_actual: producto.cantidad_actual });
+    valorAnterior = JSON.stringify({ cantidad_actual: producto.cantidad_actual, unidad: detalle.unidad });
 
-    await ProductoRepository.update(producto._id, { cantidad_actual: nuevaCantidad });
+    await ProductoRepository.update(producto._id, { 
+    cantidad_actual: nuevaCantidad, 
+    unidad: detalle.unidad || producto.unidad,
+  });
     producto.cantidad_actual = nuevaCantidad;
+    producto.unidad = detalle.unidad || producto.unidad;
     tipoOperacion = "AJUSTE";
   } else {
     producto = await ProductoRepository.create({
       nombre_producto: detalle.nombre_producto,
       cantidad_actual: detalle.cantidad,
+      unidad: detalle.unidad,
     });
 
     if (!producto._id) throw new Error("Error al crear producto: no se generó ID");
@@ -61,20 +68,23 @@ const actualizarOCrearProducto = async (detalle: any, firebaseUid: string) => {
 
   detalle.id_producto = producto._id.toString();
   detalle.nombre_producto = producto.nombre_producto;
-
+  detalle.unidad= detalle.unidad || producto.unidad;
+  
   await AuditoriaStockService.registrarAuditoria({
     id_stock: producto._id.toString(),
     id_usuario: usuario._id.toString(),
     nombre_usuario: usuario.nombre,
     campo_modificado: tipoOperacion,
-    valor_anterior: valorAnterior,
-    valor_nuevo: JSON.stringify({nombre_producto: producto.nombre_producto,cantidad_actual: producto.cantidad_actual, }),
+    valor_anterior: JSON.stringify(valorAnterior),
+    valor_nuevo: JSON.stringify({nombre_producto: producto.nombre_producto,cantidad_actual: producto.cantidad_actual,unidad: producto.unidad, }),
     descripcion: `Producto ${producto.nombre_producto} ${tipoOperacion === "CREACIÓN" ? "creado" : "ajustado"} desde remito`,
   });
 
   return detalle;
 };
 
+
+//------------------------------------------------------------------------------------------------
 const validarFecha = (fecha: Date) => {
   const fechas = new Date(fecha);
   const hoy = new Date();
@@ -95,12 +105,14 @@ const validarFecha = (fecha: Date) => {
   return fechas; 
 };
 
-export const formatearRemitoParaAuditoria = (remito: any) => {
+//------------------------------------------------------------------------------------------------
+export const formatearRemitoParaAuditoria = (remito: RemitoDto) => {
   const {numero_remito,fecha,empresa,productos,recibido_por,estado,} = remito;
 
-  const productosFormateados = productos.map((p: any) => ({
+  const productosFormateados = productos.map(p => ({
     nombre_producto: p.nombre_producto,
     cantidad: p.cantidad,
+    unidad: p.unidad,
   }));
 
   const recibidoFormateado = recibido_por
@@ -113,16 +125,16 @@ export const formatearRemitoParaAuditoria = (remito: any) => {
   return {numero_remito,fecha,empresa,productos: productosFormateados,recibido_por: recibidoFormateado,estado,};
 };
 
+
+//------------------------------------------------------------------------------------------------
 const crearRemito = async (remitoDto: RemitoDto,firebaseUid: string) => {
+  
   remitoDto.fecha = validarFecha(remitoDto.fecha);
   const existe = await  RemitoRepository.findByNumero(remitoDto.numero_remito);
   if (existe){
    throw new Error(`Ya existe una factura con el número ${remitoDto.numero_remito}`);
   }
   
-
-
-
   
   const productosActualizados = [];
   for (const detalle of remitoDto.productos) {
@@ -150,6 +162,8 @@ const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
 if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
 
 const remitoCompleto = await RemitoRepository.findById(nuevoRemito._id);
+if (!remitoCompleto) throw new Error("No se encontró el remito recién creado");
+
 const remitoAuditable = formatearRemitoParaAuditoria(remitoCompleto);
 
 await AuditoriaRemitoService.registrarAuditoria({
@@ -168,7 +182,7 @@ await AuditoriaRemitoService.registrarAuditoria({
 };
 
 
-
+//------------------------------------------------------------------------------------------------
 const actualizarRemito = async (id: string, remitoDto: Partial<RemitoDto>,firebaseUid: string) => {
  const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
   if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
@@ -182,7 +196,7 @@ const actualizarRemito = async (id: string, remitoDto: Partial<RemitoDto>,fireba
     throw new Error("Error al actualizar el remito");
   
   const existenteAuditable = formatearRemitoParaAuditoria(remitoExistente);
-const actualizadoAuditable = formatearRemitoParaAuditoria(remitoActualizado);
+  const actualizadoAuditable = formatearRemitoParaAuditoria(remitoActualizado);
 
   const valorAnterior = {
     fecha: remitoExistente.fecha?.toString() !== remitoActualizado.fecha?.toString()
@@ -220,13 +234,14 @@ const actualizadoAuditable = formatearRemitoParaAuditoria(remitoActualizado);
   return remitoActualizado;
 };
 
+//------------------------------------------------------------------------------------------------
 const borrarRemito = async (id: string,firebaseUid: string) => {
 const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
 if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
 
 const remitoExistente = await RemitoRepository.findById(id);
-const remitoAuditable = formatearRemitoParaAuditoria(remitoExistente);
 if (!remitoExistente) throw new Error("Remito no encontrado");
+const remitoAuditable = formatearRemitoParaAuditoria(remitoExistente);
 
 await AuditoriaRemitoService.registrarAuditoria({
   id_remito: id,
@@ -243,17 +258,18 @@ await RemitoRepository.remove(id);
 return remitoExistente;
 
 };
-
+//------------------------------------------------------------------------------------------------
 const obtenerPorNumero = async (numero: number): Promise<RemitoDto | null> => {
   return await RemitoRepository.findByNumero(numero);
 };
-
+//------------------------------------------------------------------------------------------------
 const actualizarEstado = async (numero_remito: number) => {
   return await RemitoRepository.updateByNumero(numero_remito, {
     estado: EstadoRemito.FACTURADO
   });
 };
 
+//------------------------------------------------------------------------------------------------
 const reporteMensualRemitos = async () => {
   return await RemitoRepository.reporteMensualRemitos();
 };

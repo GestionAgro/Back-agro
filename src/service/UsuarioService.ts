@@ -12,7 +12,7 @@ const obtenerUsuario = async (id: string) => {
 };
 
 const crearUsuario = async (usuariodto: UsuarioDTO) => {
-  if (!Object.values(Rol).includes(usuariodto.rol)) {
+  if (usuariodto.rol !== "ADMINISTRADOR" && usuariodto.rol !== "USUARIO") {
     throw new Error(`Rol inválido`);
   }
 
@@ -33,13 +33,12 @@ const borrarUsuario = async (id: string) => {
 
 const obtenerRolPorUid = async (uid: string) => {
   const usuario = await UsuarioRepository.findByFirebaseUid(uid);
-  if (!usuario)
-     throw new Error("Usuario no encontrado");
+  if (!usuario) throw new Error("Usuario no encontrado");
   return usuario.rol;
 };
 
 const cambiarRol = async (id: string, nuevoRol: Rol) => {
-  if (!Object.values(Rol).includes(nuevoRol)) {
+  if (nuevoRol !== "ADMINISTRADOR" && nuevoRol !== "USUARIO") {
     throw new Error("Rol inválido");
   }
   return await UsuarioRepository.updateRol(id, nuevoRol);

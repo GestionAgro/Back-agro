@@ -10,12 +10,12 @@ const obtenerPorId = async (id: string): Promise<PersonaDTO | null> => {
   return await PersonaRepository.obtenerPorId(id);
 };
 
-const crear = async (data: PersonaDTO): Promise<PersonaDTO> => {
-  return await PersonaRepository.crear(data);
+const crear = async (personadto: PersonaDTO): Promise<PersonaDTO> => {
+  return await PersonaRepository.crear(personadto);
 };
 
-const actualizar = async (id: string, data: Partial<PersonaDTO>): Promise<PersonaDTO | null> => {
-  return await PersonaRepository.actualizar(id, data);
+const actualizar = async (id: string, personadto: Partial<PersonaDTO>): Promise<PersonaDTO | null> => {
+  return await PersonaRepository.actualizar(id, personadto);
 };
 
 const borrar = async (id: string): Promise<PersonaDTO | null> => {

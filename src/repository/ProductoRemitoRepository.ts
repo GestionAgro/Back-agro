@@ -1,4 +1,4 @@
-import { ProductoRemitoModel } from "../schema/ProductoRemito";
+/*import { ProductoRemitoModel } from "../schema/ProductoRemito";
 import ProductoRemito from "../model/ProductoRemito";
 
 const create = async (productoRemito : ProductoRemito)=> {
@@ -9,4 +9,4 @@ const findByRemito = async (id_remito: string) => {
     return await ProductoRemitoModel.find({id_remito}).populate("id_producto");
 };
 
-export default {create, findByRemito}; 
+export default {create, findByRemito}; */

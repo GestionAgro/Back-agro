@@ -10,7 +10,6 @@ const facturaSchema = new Schema<Factura>({
   estado: {type: String, enum: Object.values(EstadoFactura),required: true,},
   numero_remito:{ type: Number, required: false },
   recibido_por: { type: Schema.Types.ObjectId, ref: "Persona", required: true },
-  id_usuario: { type: Schema.Types.ObjectId, ref: "Usuario", required: true }
 }, { versionKey: false });
 
 export const FacturaModel = model<Factura>('Factura', facturaSchema);

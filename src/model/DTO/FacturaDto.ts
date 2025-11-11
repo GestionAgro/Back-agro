@@ -15,7 +15,7 @@ export enum TipoFactura {
 export interface PersonaResumenDto{
    _id: string;
   nombre: string;
-
+  tipo_persona?: string;
 }
 
 interface FacturaDto {
@@ -28,7 +28,6 @@ interface FacturaDto {
     importe: number;
     recibido_por: PersonaResumenDto;
     estado: EstadoFactura;
-    id_usuario: string;
 
     
 }

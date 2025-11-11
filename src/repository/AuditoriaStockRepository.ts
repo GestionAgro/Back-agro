@@ -3,7 +3,7 @@ import AuditoriaStockDTO from "../model/DTO/AuditoriaStockDto";
 import { mapDtoToEntity, mapEntityToDto } from "../mappers/AuditoriaStockMapper";
 
 const findAll = async () => {
-  const docs = await AuditoriaStockModel.find().populate("id_usuario")
+  const docs = await AuditoriaStockModel.find().populate("id_usuario");
   return docs.map(mapEntityToDto);
 };
 

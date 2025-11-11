@@ -1,4 +1,4 @@
-import { Schema, Types, model } from 'mongoose';
+/*import { Schema, Types, model } from 'mongoose';
 import ProductoRemito from '../model/ProductoRemito';
 
 const productoRemitoSchema = new Schema({
@@ -7,4 +7,4 @@ const productoRemitoSchema = new Schema({
   cantidad: { type: Number, required: true }
 }, { versionKey: false });
 
-export const ProductoRemitoModel = model<ProductoRemito>('ProductoRemito', productoRemitoSchema);
+export const ProductoRemitoModel = model<ProductoRemito>('ProductoRemito', productoRemitoSchema);*/
