@@ -143,11 +143,13 @@ const ajustarStock = async (id: string, cantidad: number, firebaseUid:string, id
   if (!productoActualizado) throw new Error("Error al ajustar stock");
 
   const valorAnterior = {
+    nombre_producto: producto.nombre_producto,
     cantidad_actual: producto.cantidad_actual,
      unidad: producto.unidad,
   };
 
   const valorNuevo = {
+    nombre_producto: producto.nombre_producto,
     cantidad_actual: nuevaCantidad,
      unidad: producto.unidad,
   };

@@ -23,7 +23,10 @@ export const mapEntityToDto = (evento: any): EventoDto => {
       typeof persona === "object" && persona._id
         ?  persona._id.toString() 
         : persona?.toString(),
-    nombre: typeof persona === "object" && persona.nombre ? persona.nombre : "",
+    nombre:
+      persona && typeof persona === "object" && persona.nombre
+        ? persona.nombre
+        : "",
   };
 };
     

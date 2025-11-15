@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { PersonaResumenDto } from "./FacturaDto";
 
 export enum EstadoRemito {
-  EN_ESPERA = "EN_ESPERA",
+  PENDIENTE = "PENDIENTE",
   FACTURADO = "FACTURADO",
 }
 export interface ProductoDetalleRemitoDto {

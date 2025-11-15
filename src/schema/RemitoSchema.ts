@@ -15,7 +15,7 @@ const remitoSchema = new Schema<Remito>({
   empresa: { type: String, required: true },
   productos: [productoDetalleSchema],
   recibido_por: { type: Schema.Types.ObjectId, ref: "Persona", required: true },
-  estado: { type: String, enum:Object.values(EstadoRemito), required: true, default: EstadoRemito.EN_ESPERA, },
+  estado: { type: String, enum:Object.values(EstadoRemito), required: true, default: EstadoRemito.PENDIENTE, },
 }, { versionKey: false });
 
 export const RemitoModel = model<Remito>("Remito", remitoSchema);

@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 export enum EstadoRemito {
-  EN_ESPERA = "EN_ESPERA",
+  PENDIENTE = "PENDIENTE",
   FACTURADO = "FACTURADO",
 }
 export interface ProductoDetalleRemito {
