@@ -5,6 +5,7 @@ import FacturaDto from "../model/DTO/FacturaDto";
 import EventoService from "./EventoService";
 import AuditoriaFacturaService from "./AuditoriaFacturaService";
 import UsuarioRepository from "../repository/UsuarioRepository";
+import RemitoRepository from "../repository/RemitoRepository";
 
 const listarFactura = async () => {
   return await FacturaRepository.findall();
@@ -126,8 +127,14 @@ const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, fi
     facturadto.fecha = validarFecha(facturadto.fecha);
   }
 
+  if (facturadto.numero_remito &&facturadto.numero_remito !== facturaExistente.numero_remito) {
+    return await reasociarRemitoAFactura(id, facturadto.numero_remito, firebaseUid);
+  }
 
- const facturaActualizada = await FacturaRepository.update(id, facturadto);
+  const facturaActualizada = await FacturaRepository.update(id, facturadto);
+  if (!facturaActualizada || !facturaActualizada._id) {
+    throw new Error("Error al actualizar la factura");
+  }
   
   if(!facturaActualizada  || !facturaActualizada._id){
     throw new Error ("Error al actualizar la factura")
@@ -136,12 +143,14 @@ const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, fi
   const valorAnterior= { 
     tipo_factura: facturaExistente.tipo_factura !== facturaActualizada.tipo_factura ? facturaExistente.tipo_factura : "-",
     empresa: facturaExistente.empresa !== facturaActualizada.empresa ? facturaExistente.empresa : "-", 
-    importe: facturaExistente.importe !== facturaActualizada.importe ? facturaExistente.importe : "-",};
+    importe: facturaExistente.importe !== facturaActualizada.importe ? facturaExistente.importe : "-",
+    fecha: facturaExistente.fecha?.toString() !== facturaActualizada.fecha?.toString() ? facturaExistente.fecha: "-"};
 
   const valorNuevo = {
   tipo_factura: facturaExistente.tipo_factura !== facturaActualizada.tipo_factura ? facturaActualizada.tipo_factura : "-",
   empresa: facturaExistente.empresa !== facturaActualizada.empresa ? facturaActualizada.empresa : "-",
-  importe: facturaExistente.importe !== facturaActualizada.importe ? facturaActualizada.importe : "-" };
+  importe: facturaExistente.importe !== facturaActualizada.importe ? facturaActualizada.importe : "-" ,
+   fecha: facturaExistente.fecha?.toString() !== facturaActualizada.fecha?.toString() ? facturaActualizada.fecha: "-"};
 
 
   await AuditoriaFacturaService.registrarAuditoria({
@@ -248,6 +257,43 @@ const asociarRemitoAFactura = async (id: string, numero_remito: number, firebase
 const reporteMensualFacturas = async () => {
   return await FacturaRepository.reporteMensual();
 }
+//-------------------------------------------------------------------------------------------------------------------------------
+const reasociarRemitoAFactura = async (facturaId: string,nuevoRemitoNumero: number,firebaseUid: string) => {
+  const factura = await FacturaRepository.findById(facturaId);
+  if (!factura) throw new Error("Factura no encontrada");
 
+  const nuevoRemito = await RemitoService.obtenerPorNumero(nuevoRemitoNumero);
+  if (!nuevoRemito) throw new Error("Remito no encontrado");
+
+
+  const facturaActualizada = await FacturaRepository.update(facturaId, {
+    numero_remito: nuevoRemitoNumero,
+    estado: EstadoFactura.IMPUTADA,
+  });
+ 
+  if (factura.numero_remito) {
+    await RemitoService.actualizarEstado(factura.numero_remito);
+  }
+  await RemitoService.actualizarEstado(nuevoRemitoNumero); 
+  const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
+  if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
+  
+    if (!facturaActualizada || !facturaActualizada._id) {
+    throw new Error("No se encontró la factura para actualizar");
+  }
+
+  await AuditoriaFacturaService.registrarAuditoria({
+    id_factura: facturaActualizada._id.toString(),
+    id_usuario: usuario._id.toString(),
+    numero_factura: facturaActualizada.numero_factura,
+    nombre_usuario: usuario.nombre,
+    campo_modificado: "REASOCIAR REMITO",
+    valor_anterior: JSON.stringify({numero_remito: factura.numero_remito,estado: factura.estado,}),
+    valor_nuevo: JSON.stringify({numero_remito: facturaActualizada.numero_remito,estado: facturaActualizada.estado,}),
+    descripcion: `Se reasoció la factura ${facturaActualizada.numero_factura} del remito ${factura.numero_remito} al remito ${nuevoRemitoNumero} por ${usuario.nombre}`,
+  });
+
+  return facturaActualizada;
+};
 
 export default { listarFactura,obtenerFactura,crearFactura,actualizarFactura,borrarFactura, obtenerPorNumero, obtenerPorRemito, asociarRemitoAFactura, reporteMensualFacturas};

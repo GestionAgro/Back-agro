@@ -5,6 +5,7 @@ import UsuarioRepository from "../repository/UsuarioRepository";
 import AuditoriaStockService from "./AuditoriaStockService";
 import PersonaRepository from "../repository/PersonaRepository";
 import EventoService from "./EventoService";
+import { obtenerAuditoriasPorFactura } from "../controller/AuditoriaFacturaController";
 
 const listarProductos = async () => {
   return await ProductoRepository.findall();
@@ -26,6 +27,13 @@ export const formatearProductoParaAuditoria = (producto: ProductoDTO) => {
 const crearProducto = async (productodto: ProductoDTO, firebaseUid: string) => {
     const usuario = await UsuarioRepository.findByFirebaseUid(firebaseUid);
   if (!usuario || !usuario._id) throw new Error("Usuario no encontrado");
+  
+  const nombreProducto = productodto.nombre_producto.trim().toLocaleLowerCase();
+
+  const existe = await ProductoRepository.findByName(nombreProducto);
+  if(existe){throw new Error("El producto ya existe");}
+
+  productodto.nombre_producto = nombreProducto;
 
   const nuevoProducto = await ProductoRepository.create(productodto);
 

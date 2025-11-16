@@ -9,6 +9,7 @@ import AuditoriaRemitoService from "./AuditoriaRemitoService";
 import UsuarioRepository from "../repository/UsuarioRepository";
 import AuditoriaStockService from "./AuditoriaStockService";
 import { Types } from "mongoose";
+import FacturaRepository from "../repository/FacturaRepository";
 
 
 const listarRemitos = async () => {
@@ -45,6 +46,10 @@ const actualizarOCrearProducto = async (detalle: ProductoDetalleRemitoDto, fireb
 
   if (producto) {
     if (!producto._id) throw new Error("El producto no tiene ID definido");
+
+   if(producto.unidad?.toLocaleLowerCase().trim() !== detalle.unidad?.toLocaleLowerCase().trim()){
+   throw new Error(`Unidad inconsistente: el producto ya está registrado en ${producto.unidad}`);
+   }
 
     const nuevaCantidad = producto.cantidad_actual + detalle.cantidad;
     valorAnterior = JSON.stringify({ cantidad_actual: producto.cantidad_actual, unidad: detalle.unidad });
@@ -264,11 +269,21 @@ const obtenerPorNumero = async (numero: number): Promise<RemitoDto | null> => {
 };
 //------------------------------------------------------------------------------------------------
 const actualizarEstado = async (numero_remito: number) => {
-  return await RemitoRepository.updateByNumero(numero_remito, {
-    estado: EstadoRemito.FACTURADO
-  });
-};
+  const remito = await RemitoRepository.findByNumero(numero_remito);
+  if (!remito) throw new Error("Remito no encontrado");
 
+  const facturasAsociadas = await FacturaRepository.findByRemito(numero_remito);
+  
+  if (!facturasAsociadas) {
+    return await RemitoRepository.updateByNumero(numero_remito, {
+      estado: EstadoRemito.PENDIENTE,
+    });
+  } else {
+    return await RemitoRepository.updateByNumero(numero_remito, {
+      estado: EstadoRemito.FACTURADO,
+    });
+  }
+};
 //------------------------------------------------------------------------------------------------
 const reporteMensualRemitos = async () => {
   return await RemitoRepository.reporteMensualRemitos();

@@ -28,8 +28,8 @@ export const crearRemito = async (req: Request, res: Response) => {
     const uid = res.locals?.user?.uid;
     const nuevo = await RemitoService.crearRemito(req.body,uid);
     res.status(201).json(nuevo);
-  } catch (error) {
-    res.status(400).json({error:"Error al crear remito" });
+  } catch (error: any) {
+    res.status(400).json({error: error.message || "Error en el remito" });
   }
 };
 

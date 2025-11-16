@@ -30,4 +30,8 @@ const remove = async (id: string) => {
   return deleted ? mapEntityToDto(deleted) : null;
 };
 
-export default { findall, findById, create, update, remove };
+const findByName = async (nombre: string) => {
+  return await ProductoModel.findOne({nombre_producto: nombre});
+}
+
+export default { findall, findById, create, update, remove, findByName};
