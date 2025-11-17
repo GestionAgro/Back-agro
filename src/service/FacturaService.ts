@@ -108,7 +108,7 @@ const facturaFormateada = formatearFacturaParaAuditoria(facturaCompleta);
     });
   }
 
-  return nuevaFactura;
+  return facturaCompleta;
 };
 
 //------------------------------------------------------------------------------------------------
@@ -135,10 +135,7 @@ const actualizarFactura = async (id: string, facturadto: Partial<FacturaDto>, fi
   if (!facturaActualizada || !facturaActualizada._id) {
     throw new Error("Error al actualizar la factura");
   }
-  
-  if(!facturaActualizada  || !facturaActualizada._id){
-    throw new Error ("Error al actualizar la factura")
-  }
+ 
 
   const valorAnterior= { 
     tipo_factura: facturaExistente.tipo_factura !== facturaActualizada.tipo_factura ? facturaExistente.tipo_factura : "-",
@@ -178,7 +175,6 @@ const borrarFactura = async (id: string, firebaseUid: string) => {
 }
   const facturaFormateada = formatearFacturaParaAuditoria(facturaExistente);
 
-  if (!facturaExistente) throw new Error("Factura no encontrada");
 
   await AuditoriaFacturaService.registrarAuditoria({
     id_factura: id,
@@ -250,7 +246,7 @@ const asociarRemitoAFactura = async (id: string, numero_remito: number, firebase
     descripcion: `Se asoció el remito ${numero_remito} a la factura ${facturaActualizada.numero_factura} por ${usuario.nombre}`
   });
 
-  return await FacturaRepository.findById(facturaActualizada._id.toString());
+  return await facturaActualizada;
 };
 
 //------------------------------------------------------------------------------------------------
