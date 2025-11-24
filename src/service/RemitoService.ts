@@ -137,7 +137,7 @@ const crearRemito = async (remitoDto: RemitoDto,firebaseUid: string) => {
   remitoDto.fecha = validarFecha(remitoDto.fecha);
   const existe = await  RemitoRepository.findByNumero(remitoDto.numero_remito);
   if (existe){
-   throw new Error(`Ya existe una factura con el número ${remitoDto.numero_remito}`);
+   throw new Error(`Ya existe un remito con el número ${remitoDto.numero_remito}`);
   }
   
   
