@@ -200,9 +200,7 @@ const actualizarRemito = async (id: string, remitoDto: Partial<RemitoDto>,fireba
   if (!remitoActualizado || !remitoActualizado._id)
     throw new Error("Error al actualizar el remito");
   
-  const existenteAuditable = formatearRemitoParaAuditoria(remitoExistente);
-  const actualizadoAuditable = formatearRemitoParaAuditoria(remitoActualizado);
-
+  
   const valorAnterior = {
     fecha: remitoExistente.fecha?.toString() !== remitoActualizado.fecha?.toString()
       ? remitoExistente.fecha
