@@ -8,7 +8,7 @@ export const mapDtoToEntity = (dto: FacturaDto): Factura => ({
   recibido_por: new Types.ObjectId(
     typeof dto.recibido_por === "string" ? dto.recibido_por : dto.recibido_por._id
   ),
- // id_usuario: new Types.ObjectId(dto.id_usuario),
+
 });
 
 export const mapEntityToDto = (factura: any): FacturaDto => {

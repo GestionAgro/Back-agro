@@ -1,5 +1,6 @@
 import { ObjectId, Types } from "mongoose";
 import Persona from "../Persona";
+import PersonaDTO from "./PersonaDto";
 
 export enum EstadoFactura {
   PENDIENTE = "PENDIENTE",
@@ -12,11 +13,6 @@ export enum TipoFactura {
   C = "C",
 }
  
-export interface PersonaResumenDto{
-   _id: string;
-  nombre: string;
-  tipo_persona?: string;
-}
 
 interface FacturaDto {
     _id?:  string; 
@@ -26,7 +22,7 @@ interface FacturaDto {
     fecha: Date;
     empresa: string;
     importe: number;
-    recibido_por: PersonaResumenDto;
+    recibido_por: PersonaDTO;
     estado: EstadoFactura;
 
     

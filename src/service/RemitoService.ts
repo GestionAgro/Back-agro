@@ -55,12 +55,11 @@ const actualizarOCrearProducto = async (detalle: ProductoDetalleRemitoDto, fireb
     valorAnterior = JSON.stringify({ cantidad_actual: producto.cantidad_actual, unidad: detalle.unidad });
 
     await ProductoRepository.update(producto._id, { 
-    cantidad_actual: nuevaCantidad, 
-    unidad: detalle.unidad || producto.unidad,
+    cantidad_actual: nuevaCantidad
   });
     producto.cantidad_actual = nuevaCantidad;
-    producto.unidad = detalle.unidad || producto.unidad;
     tipoOperacion = "AJUSTE";
+
   } else {
     producto = await ProductoRepository.create({
       nombre_producto: detalle.nombre_producto,
@@ -71,9 +70,6 @@ const actualizarOCrearProducto = async (detalle: ProductoDetalleRemitoDto, fireb
     if (!producto._id) throw new Error("Error al crear producto: no se generó ID");
   }
 
-  detalle.id_producto = producto._id.toString();
-  detalle.nombre_producto = producto.nombre_producto;
-  detalle.unidad= detalle.unidad || producto.unidad;
   
   await AuditoriaStockService.registrarAuditoria({
     id_stock: producto._id.toString(),
@@ -194,6 +190,10 @@ const actualizarRemito = async (id: string, remitoDto: Partial<RemitoDto>,fireba
 
   const remitoExistente = await RemitoRepository.findById(id);
   if (!remitoExistente) throw new Error("Remito no encontrado");
+
+   if (remitoDto.fecha) {
+    remitoDto.fecha = validarFecha(remitoDto.fecha);
+  }
 
   
   const remitoActualizado = await RemitoRepository.update(id, remitoDto);

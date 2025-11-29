@@ -88,7 +88,7 @@ const actualizarProducto = async (id: string, data: Partial<ProductoDTO>, fireba
         : "-",
     unidad:
     productoExistente.unidad !== productoActualizado.unidad
-      ? productoExistente.unidad
+      ? productoActualizado.unidad
       : "-",
   };
 

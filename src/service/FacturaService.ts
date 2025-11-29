@@ -6,6 +6,7 @@ import EventoService from "./EventoService";
 import AuditoriaFacturaService from "./AuditoriaFacturaService";
 import UsuarioRepository from "../repository/UsuarioRepository";
 import RemitoRepository from "../repository/RemitoRepository";
+import { EstadoRemito } from "../model/Remito";
 
 const listarFactura = async () => {
   return await FacturaRepository.findall();
@@ -172,6 +173,9 @@ const borrarFactura = async (id: string, firebaseUid: string) => {
   const facturaExistente = await FacturaRepository.findById(id);
   if (!facturaExistente) {
   throw new Error("No se pudo obtener la factura existente");
+}
+  if (facturaExistente.numero_remito) {
+  await RemitoRepository.updateByNumero(facturaExistente.numero_remito,{ estado: EstadoRemito.PENDIENTE });
 }
   const facturaFormateada = formatearFacturaParaAuditoria(facturaExistente);
 
